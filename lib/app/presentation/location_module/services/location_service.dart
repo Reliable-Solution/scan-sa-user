@@ -1,0 +1,245 @@
+import 'dart:convert';
+import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:geolocator/geolocator.dart';
+import 'package:get/get.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:scan_sa_user/app/presentation/location_module/models/prediction_model.dart';
+import 'package:scan_sa_user/app/presentation/location_module/models/zone_response_model.dart';
+import 'package:scan_sa_user/app/presentation/location_module/repositories/location_repository_interface.dart';
+import 'package:scan_sa_user/app/presentation/location_module/services/location_service_interface.dart';
+import 'package:scan_sa_user/app/presentation/location_module/widgets/permission_dialog_widget.dart';
+import 'package:scan_sa_user/app/presentation/main_screens/controller/global_controller.dart';
+import 'package:scan_sa_user/app/widgets/custom_snackbar.dart';
+import 'package:scan_sa_user/common/models/address_model.dart';
+import 'package:scan_sa_user/common/models/response_model.dart';
+import 'package:scan_sa_user/helper/address_helper.dart';
+import 'package:scan_sa_user/utils/app_constants.dart';
+
+class LocationService implements LocationServiceInterface {
+  LocationService({required this.locationRepoInterface});
+  final LocationRepositoryInterface<AddressModel> locationRepoInterface;
+
+  @override
+  Future<String> getAddressFromGeocode(LatLng latLng) async {
+    return locationRepoInterface.getAddressFromGeocode(latLng);
+  }
+
+  @override
+  Future<ZoneResponseModel> getZone(
+    String? lat,
+    String? lng, {
+    bool handleError = false,
+  }) async {
+    return locationRepoInterface.getZone(lat, lng, handleError: handleError);
+  }
+
+  @override
+  Future<Position> getPosition(
+    LatLng? defaultLatLng,
+    LatLng configLatLng,
+  ) async {
+    Position myPosition;
+    try {
+      final newLocalData = await Geolocator.getCurrentPosition(
+        locationSettings: const LocationSettings(
+          accuracy: LocationAccuracy.high,
+        ),
+      );
+      myPosition = newLocalData;
+    } catch (e) {
+      myPosition = Position(
+        latitude: defaultLatLng != null
+            ? defaultLatLng.latitude
+            : configLatLng.latitude,
+        longitude: defaultLatLng != null
+            ? defaultLatLng.longitude
+            : configLatLng.longitude,
+        timestamp: DateTime.now(),
+        accuracy: 1,
+        altitude: 1,
+        heading: 1,
+        speed: 1,
+        speedAccuracy: 1,
+        altitudeAccuracy: 1,
+        headingAccuracy: 1,
+      );
+    }
+    return myPosition;
+  }
+
+  @override
+  void handleMapAnimation(
+    GoogleMapController? mapController,
+    Position myPosition,
+  ) {
+    if (mapController != null) {
+      mapController.animateCamera(
+        CameraUpdate.newCameraPosition(
+          CameraPosition(
+            target: LatLng(myPosition.latitude, myPosition.longitude),
+            zoom: 17,
+          ),
+        ),
+      );
+    }
+  }
+
+  @override
+  Map<String, String> prepareHeader(List<int>? zoneIds) {
+    final header = <String, String>{
+      'Content-Type': 'application/json; charset=UTF-8',
+      AppConstants.zoneId: zoneIds != null ? jsonEncode(zoneIds) : '',
+    };
+    return header;
+  }
+
+  @override
+  void configureFirebaseMessaging(AddressModel address) {
+    if (!GetPlatform.isWeb) {
+      if (Get.find<GlobalController>().configModel!.demo!) {
+        FirebaseMessaging.instance.subscribeToTopic('demo_reset');
+      } else {
+        FirebaseMessaging.instance.unsubscribeFromTopic('demo_reset');
+      }
+      if (AddressHelper.getUserAddressFromSharedPref() != null) {
+        if (AddressHelper.getUserAddressFromSharedPref()!.zoneIds != null) {
+          for (final zoneID
+              in AddressHelper.getUserAddressFromSharedPref()!.zoneIds!) {
+            FirebaseMessaging.instance.unsubscribeFromTopic(
+              'zone_${zoneID}_customer',
+            );
+          }
+        } else {
+          FirebaseMessaging.instance.unsubscribeFromTopic(
+            'zone_${AddressHelper.getUserAddressFromSharedPref()!.zoneId}_customer',
+          );
+        }
+      } else {
+        FirebaseMessaging.instance.subscribeToTopic(
+          'zone_${address.zoneId}_customer',
+        );
+      }
+      if (address.zoneIds != null) {
+        for (final zoneID in address.zoneIds!) {
+          FirebaseMessaging.instance.subscribeToTopic(
+            'zone_${zoneID}_customer',
+          );
+        }
+      } else {
+        FirebaseMessaging.instance.subscribeToTopic(
+          'zone_${address.zoneId}_customer',
+        );
+      }
+    }
+  }
+
+  @override
+  void handleRoute(bool fromSignUp, String? route, bool canRoute) {
+    if (route != null && canRoute) {
+      Get.offAllNamed(route);
+    } else {
+      // Get.offAllNamed(RouGloteHelper.getInitialRoute());
+    }
+  }
+
+  @override
+  Future<LatLng> getLatLng(String? id) async {
+    var latLng = const LatLng(0, 0);
+    final response = await locationRepoInterface.get(id);
+    if (response.statusCode == 200) {
+      final data = response.body;
+      final location = data['location'];
+      final lat = location['latitude'] as double;
+      final lng = location['longitude'] as double;
+      latLng = LatLng(lat, lng);
+    }
+    return latLng;
+  }
+
+  @override
+  Future<List<PredictionModel>> searchLocation(String text) async {
+    var predictionList = <PredictionModel>[];
+    final response = await locationRepoInterface.searchLocation(text);
+    if (response.statusCode == 200) {
+      predictionList = [];
+      response.body['suggestions'].forEach(
+        (prediction) => predictionList.add(
+          PredictionModel.fromJson(prediction as Map<String, dynamic>),
+        ),
+      );
+    } else {
+      showCustomSnackBar(
+        response.body['error_message'] as String? ?? response.bodyString,
+      );
+    }
+    return predictionList;
+  }
+
+  @override
+  Future<void> checkLocationPermission(Function onTap) async {
+    var permission = await Geolocator.checkPermission();
+    if (permission == LocationPermission.denied) {
+      permission = await Geolocator.requestPermission();
+    }
+    if (permission == LocationPermission.denied) {
+      showCustomSnackBar('you_have_to_allow'.tr);
+    } else if (permission == LocationPermission.deniedForever) {
+      await Get.dialog(const PermissionDialogWidget());
+    } else {
+      onTap();
+    }
+  }
+
+  @override
+  Future<void> authorizeNavigation(
+    String page,
+    List<AddressModel>? addressList,
+    GoogleMapController? mapController, {
+    bool offNamed = false,
+    bool offAll = false,
+  }) async {
+    // if (addressList != null && addressList.isEmpty) {
+    //   Get.toNamed(RouteHelper.getPickMapRoute(page, false));
+    // } else {
+    //   if (offNamed) {
+    //     Get.offNamed(RouteHelper.getAccessLocationRoute(page));
+    //   } else if (offAll) {
+    //     Get.offAllNamed(RouteHelper.getAccessLocationRoute(page));
+    //   } else {
+    //     Get.toNamed(RouteHelper.getAccessLocationRoute(page));
+    //   }
+    // }
+  }
+
+  @override
+  void defaultNavigation(String page, GoogleMapController? mapController) {
+    // Get.toNamed(RouteHelper.getPickMapRoute(page, false));
+  }
+
+  @override
+  Future<List<AddressModel>?> getAllAddress() async {
+    return (await locationRepoInterface.getList()) as List<AddressModel>?;
+  }
+
+  @override
+  Future<ResponseModel> removeAddressByID(int? id) async {
+    return (await locationRepoInterface.delete(id)) as ResponseModel;
+  }
+
+  @override
+  Future<ResponseModel> addAddress(AddressModel addressModel) async {
+    return (await locationRepoInterface.add(addressModel)) as ResponseModel;
+  }
+
+  @override
+  Future<ResponseModel> updateAddress(
+    AddressModel addressModel,
+    int? addressId,
+  ) async {
+    return (await locationRepoInterface.update(
+          addressModel.toJson(),
+          addressId,
+        ))
+        as ResponseModel;
+  }
+}

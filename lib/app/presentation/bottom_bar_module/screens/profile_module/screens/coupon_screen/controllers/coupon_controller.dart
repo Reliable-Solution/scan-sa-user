@@ -1,0 +1,171 @@
+import 'package:get/get.dart';
+import 'package:scan_sa_user/app/presentation/bottom_bar_module/screens/profile_module/screens/coupon_screen/domain/models/coupon_model.dart';
+import 'package:scan_sa_user/app/presentation/bottom_bar_module/screens/profile_module/screens/coupon_screen/domain/services/coupon_service_interface.dart';
+import 'package:scan_sa_user/app/presentation/main_screens/main_app.dart';
+import 'package:scan_sa_user/app/widgets/custom_snackbar.dart';
+import 'package:scan_sa_user/helper/price_converter.dart';
+
+class CouponController extends GetxController implements GetxService {
+  CouponController({required this.couponServiceInterface});
+  final CouponServiceInterface couponServiceInterface;
+
+  List<CouponModel> _couponList = [];
+  List<CouponModel> get couponList => _couponList;
+
+  List<CouponModel>? _taxiCouponList;
+  List<CouponModel>? get taxiCouponList => _taxiCouponList;
+
+  CouponModel? _coupon;
+  CouponModel? get coupon => _coupon;
+
+  num? _discount = 0.0;
+  num? get discount => _discount;
+
+  bool _freeDelivery = false;
+  bool get freeDelivery => _freeDelivery;
+
+  int _currentIndex = 0;
+  int get currentIndex => _currentIndex;
+
+  void setCurrentIndex(int index, bool notify) {
+    _currentIndex = index;
+    if (notify) {
+      update();
+    }
+  }
+
+  bool isCouponLoad = false;
+  Future<void> getCouponList() async {
+    isCouponLoad = true;
+    update();
+    final couponList = await couponServiceInterface.getCouponList();
+    if (couponList != null) {
+      _couponList = [];
+      _couponList.addAll(couponList);
+    }
+    isCouponLoad = false;
+    update();
+    update();
+  }
+
+  Future<void> getTaxiCouponList() async {
+    final taxiCouponList = await couponServiceInterface.getTaxiCouponList();
+    if (taxiCouponList != null) {
+      _taxiCouponList = [];
+      _taxiCouponList!.addAll(taxiCouponList);
+    }
+    update();
+  }
+
+  Future<num?> applyCoupon(
+    String coupon,
+    num order,
+    num? deliveryCharge,
+    int? storeID,
+  ) async {
+    EasyLoading.load();
+    _discount = 0;
+    final couponModel = await couponServiceInterface.applyCoupon(
+      coupon,
+      storeID,
+    );
+    if (couponModel != null) {
+      _coupon = couponModel;
+      if (_coupon?.couponType == 'free_delivery') {
+        _processFreeDeliveryCoupon(deliveryCharge!, order);
+      } else {
+        _processCoupon(order);
+      }
+    }
+    EasyLoading.dismiss();
+    return _discount;
+  }
+
+  void _processFreeDeliveryCoupon(num deliveryCharge, num order) {
+    if (deliveryCharge > 0) {
+      if (_coupon!.minPurchase! <= order) {
+        _discount = 0;
+        _freeDelivery = true;
+      } else {
+        showCustomSnackBar(
+          '${'the_minimum_item_purchase_amount_for_this_coupon_is'.tr} '
+          '${PriceConverter.convertPrice(_coupon!.minPurchase)} '
+          '${'but_you_have'.tr} ${PriceConverter.convertPrice(order)}',
+        );
+        _coupon = null;
+        _discount = 0;
+      }
+    } else {
+      showCustomSnackBar('invalid_code_or'.tr);
+    }
+  }
+
+  void _processCoupon(num order) {
+    if (_coupon!.minPurchase != null && _coupon!.minPurchase! <= order) {
+      if (_coupon!.discountType == 'percent') {
+        if (_coupon!.maxDiscount != null && _coupon!.maxDiscount! > 0) {
+          _discount = (_coupon!.discount! * order / 100) < _coupon!.maxDiscount!
+              ? (_coupon!.discount! * order / 100)
+              : _coupon!.maxDiscount;
+        } else {
+          _discount = _coupon!.discount! * order / 100;
+        }
+      } else {
+        _discount = _coupon!.discount;
+      }
+    } else {
+      _discount = 0.0;
+      showCustomSnackBar(
+        '${'the_minimum_item_purchase_amount_for_this_coupon_is'.tr} '
+        '${PriceConverter.convertPrice(_coupon!.minPurchase)} '
+        '${'but_you_have'.tr} ${PriceConverter.convertPrice(order)}',
+      );
+    }
+  }
+
+  Future<num?> applyTaxiCoupon(
+    String coupon,
+    num orderAmount,
+    int? providerId,
+  ) async {
+    EasyLoading.load();
+    _discount = 0;
+    update();
+    final taxiCouponModel = await couponServiceInterface.applyTaxiCoupon(
+      coupon,
+      providerId,
+    );
+    if (taxiCouponModel != null) {
+      // _coupon = taxiCouponModel;
+      if (_coupon!.minPurchase != null && _coupon!.minPurchase! < orderAmount) {
+        if (_coupon!.discountType == 'percent') {
+          if (_coupon!.maxDiscount != null && _coupon!.maxDiscount! > 0) {
+            _discount =
+                (_coupon!.discount! * orderAmount / 100) < _coupon!.maxDiscount!
+                ? (_coupon!.discount! * orderAmount / 100)
+                : _coupon!.maxDiscount;
+          } else {
+            _discount = _coupon!.discount! * orderAmount / 100;
+          }
+        } else {
+          _discount = _coupon!.discount;
+        }
+      } else {
+        _discount = 0.0;
+      }
+    }
+    EasyLoading.dismiss();
+    update();
+    return _discount;
+  }
+
+  void removeCouponData(bool notify) {
+    _coupon = null;
+    EasyLoading.dismiss();
+    _discount = 0.0;
+    _freeDelivery = false;
+    if (notify) {
+      update();
+    }
+  }
+}

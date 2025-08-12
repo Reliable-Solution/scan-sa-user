@@ -1,0 +1,54 @@
+{
+  "project_info": {
+    "project_number": "221589331538",
+    "project_id": "scan-sa",
+    "storage_bucket": "scan-sa.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:221589331538:android:c5d6b2f89344124bfa498b",
+        "android_client_info": {
+          "package_name": "com.scan.sa.user.mobile"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "221589331538-s5vuq8ca31u2nf8bp1o311dgn196i3a7.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.scan.sa.user.mobile",
+            "certificate_hash": "7b1a1f3f8e23fc8a3d8c490ec61a4f6ecb94d550"
+          }
+        },
+        {
+          "client_id": "221589331538-rdkiafet8ufentha23ds4k85r5u70lj2.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCJ5fHpupJKww00L4_rVtXu0F7_CyAcnjQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "221589331538-rdkiafet8ufentha23ds4k85r5u70lj2.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "221589331538-1iufc3flne4h5hql4e2ddm84un83qjl5.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.scan.sa.user.mobile"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
