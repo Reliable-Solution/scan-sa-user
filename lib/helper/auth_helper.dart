@@ -1,16 +1,16 @@
 import 'package:get/get.dart';
-import 'package:scan_sa_user/features/auth/controllers/auth_controller.dart';
+import 'package:scan_sa_user/app/presentation/main_screens/controller/global_controller.dart';
 
-class AuthHelper {
+class GlobalHelper {
   static bool isGuestLoggedIn() {
-    return Get.find<AuthController>().isGuestLoggedIn();
+    return Get.find<GlobalController>().isGuestLoggedIn();
   }
 
   static String getGuestId() {
-    return Get.find<AuthController>().getGuestId();
+    return Get.find<GlobalController>().getGuestId();
   }
 
   static bool isLoggedIn() {
-    return Get.find<AuthController>().isLoggedIn();
+    return Get.find<GlobalController>().isLoggedIn();
   }
 }

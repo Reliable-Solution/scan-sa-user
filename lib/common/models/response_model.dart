@@ -1,5 +1,5 @@
-import 'package:scan_sa_user/features/auth/domain/models/auth_response_model.dart';
-import 'package:scan_sa_user/features/profile/domain/models/update_profile_response_model.dart';
+import 'package:scan_sa_user/app/presentation/auth_module/models/auth_response_model.dart';
+import 'package:scan_sa_user/common/models/update_profile_response_model.dart';
 
 class ResponseModel {
   ResponseModel(

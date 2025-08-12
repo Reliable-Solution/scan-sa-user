@@ -1,10 +1,11 @@
+import 'package:drift/drift.dart' as drift;
 import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-import 'package:scan_sa_user/common/enums/data_source_enum.dart';
-import 'package:drift/drift.dart' as drift;
 import 'package:scan_sa_user/helper/db_helper.dart';
-import 'package:scan_sa_user/local/cache_response.dart';
+import 'package:scan_sa_user/helper/local/cache_response.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
+enum DataSourceEnum { client, local }
 
 class LocalClient {
   static Future<String?> organize(
@@ -13,7 +14,7 @@ class LocalClient {
     String? responseBody,
     Map<String, String>? header,
   ) async {
-    SharedPreferences sharedPreferences = Get.find();
+    final sharedPreferences = Get.find<SharedPreferences>();
     switch (source) {
       case DataSourceEnum.client:
         try {
@@ -24,7 +25,7 @@ class LocalClient {
           if (GetPlatform.isWeb) {
             await sharedPreferences.setString(cacheId, responseBody ?? '');
           } else {
-            DbHelper.insertOrUpdate(
+            await DbHelper.insertOrUpdate(
               id: cacheId,
               data: CacheResponseCompanion(
                 endPoint: drift.Value(cacheId),
@@ -41,11 +42,12 @@ class LocalClient {
       case DataSourceEnum.local:
         try {
           if (GetPlatform.isWeb) {
-            String? cacheData = sharedPreferences.getString(cacheId);
+            final cacheData = sharedPreferences.getString(cacheId);
             return cacheData;
           } else {
-            final CacheResponseData? cacheResponseData =
-                await database.getCacheResponseById(cacheId);
+            final cacheResponseData = await database.getCacheResponseById(
+              cacheId,
+            );
             return cacheResponseData?.response;
           }
         } catch (e) {

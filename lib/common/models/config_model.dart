@@ -1,5 +1,4 @@
 import 'package:scan_sa_user/common/models/module_model.dart';
-import 'package:scan_sa_user/helper/string_extension.dart';
 
 class ConfigModel {
   ConfigModel({
@@ -62,7 +61,6 @@ class ConfigModel {
     this.cookiesText,
     this.homeDeliveryStatus,
     this.takeawayStatus,
-    this.dineInStatus,
     this.partialPaymentStatus,
     this.partialPaymentMethod,
     this.additionalChargeStatus,
@@ -89,137 +87,148 @@ class ConfigModel {
   });
 
   ConfigModel.fromJson(Map<String, dynamic> json) {
-    businessName = json['business_name'];
-    logoFullUrl = json['logo_full_url'];
-    address = json['address'];
-    phone = json['phone'];
-    email = json['email'];
-    country = json['country'];
+    businessName = json['business_name'] as String?;
+    logoFullUrl = json['logo_full_url'] as String?;
+    address = json['address'] as String?;
+    phone = json['phone'] as String?;
+    email = json['email'] as String?;
+    country = json['country'] as String?;
     defaultLocation = json['default_location'] != null
-        ? DefaultLocation.fromJson(json['default_location'])
+        ? DefaultLocation.fromJson(
+            json['default_location'] as Map<String, dynamic>,
+          )
         : null;
-    currencySymbol = json['currency_symbol'];
-    currencySymbolDirection = json['currency_symbol_direction'];
-    appMinimumVersionAndroid =
-        json['app_minimum_version_android']?.toDouble() ?? 0.0;
-    appUrlAndroid = json['app_url_android'];
-    appMinimumVersionIos = json['app_minimum_version_ios']?.toDouble() ?? 0.0;
-    appUrlIos = json['app_url_ios'];
-    customerVerification = json['customer_verification'];
-    scheduleOrder = json['schedule_order'];
-    orderDeliveryVerification = json['order_delivery_verification'];
-    cashOnDelivery = json['cash_on_delivery'];
-    digitalPayment = json['digital_payment'];
-    perKmShippingCharge = json['per_km_shipping_charge']?.toDouble();
-    minimumShippingCharge = json['minimum_shipping_charge']?.toDouble();
-    demo = json['demo'];
-    maintenanceMode = json['maintenance_mode'];
-    orderConfirmationModel = json['order_confirmation_model'];
-    showDmEarning = json['show_dm_earning'];
-    canceledByDeliveryman = json['canceled_by_deliveryman'];
-    timeformat = json['timeformat'];
+    currencySymbol = json['currency_symbol'] as String?;
+    currencySymbolDirection = json['currency_symbol_direction'] as String?;
+    appMinimumVersionAndroid = json['app_minimum_version_android'] as num?;
+    appUrlAndroid = json['app_url_android'] as String?;
+    appMinimumVersionIos = json['app_minimum_version_ios'] as num?;
+    appUrlIos = json['app_url_ios'] as String?;
+    customerVerification = json['customer_verification'] as bool?;
+    scheduleOrder = json['schedule_order'] as bool?;
+    orderDeliveryVerification = json['order_delivery_verification'] as bool?;
+    cashOnDelivery = json['cash_on_delivery'] as bool?;
+    digitalPayment = json['digital_payment'] as bool?;
+    perKmShippingCharge = json['per_km_shipping_charge'] as num?;
+    minimumShippingCharge = json['minimum_shipping_charge'] as num?;
+    demo = json['demo'] as bool?;
+    maintenanceMode = json['maintenance_mode'] as bool?;
+    orderConfirmationModel = json['order_confirmation_model'] as String?;
+    showDmEarning = json['show_dm_earning'] as bool?;
+    canceledByDeliveryman = json['canceled_by_deliveryman'] as bool?;
+    timeformat = json['timeformat'] as String?;
     if (json['language'] != null) {
       language = <Language>[];
       json['language'].forEach((v) {
-        language!.add(Language.fromJson(v));
+        language!.add(Language.fromJson(v as Map<String, dynamic>));
       });
     }
-    toggleVegNonVeg = json['toggle_veg_non_veg'];
-    toggleDmRegistration = json['toggle_dm_registration'];
-    toggleStoreRegistration = json['toggle_store_registration'];
+    toggleVegNonVeg = json['toggle_veg_non_veg'] as bool?;
+    toggleDmRegistration = json['toggle_dm_registration'] as bool?;
+    toggleStoreRegistration = json['toggle_store_registration'] as bool?;
     scheduleOrderSlotDuration = json['schedule_order_slot_duration'] == 0
         ? 30
-        : json['schedule_order_slot_duration'];
-    digitAfterDecimalPoint = json['digit_after_decimal_point'];
-    module =
-        json['module'] != null ? ModuleModel.fromJson(json['module']) : null;
-    moduleConfig = json['module_config'] != null
-        ? ModuleConfig.fromJson(json['module_config'])
+        : json['schedule_order_slot_duration'] as int?;
+    digitAfterDecimalPoint = json['digit_after_decimal_point'] as int?;
+    module = json['module'] != null
+        ? ModuleModel.fromJson(json['module'] as Map<String, dynamic>)
         : null;
-    parcelPerKmShippingCharge =
-        json['parcel_per_km_shipping_charge']?.toDouble();
+    moduleConfig = json['module_config'] != null
+        ? ModuleConfig.fromJson(json['module_config'] as Map<String, dynamic>)
+        : null;
+    parcelPerKmShippingCharge = json['parcel_per_km_shipping_charge'] as num?;
     parcelMinimumShippingCharge =
-        json['parcel_minimum_shipping_charge']?.toDouble();
+        json['parcel_minimum_shipping_charge'] as num?;
     landingPageSettings = json['landing_page_settings'] != null
-        ? LandingPageSettings.fromJson(json['landing_page_settings'])
+        ? LandingPageSettings.fromJson(
+            json['landing_page_settings'] as Map<String, dynamic>,
+          )
         : null;
     if (json['social_media'] != null) {
       socialMedia = <SocialMedia>[];
       json['social_media'].forEach((v) {
-        socialMedia!.add(SocialMedia.fromJson(v));
+        socialMedia!.add(SocialMedia.fromJson(v as Map<String, dynamic>));
       });
     }
-    footerText = json['footer_text'];
+    footerText = json['footer_text'] as String?;
     landingPageLinks = json['landing_page_links'] != null
-        ? LandingPageLinks.fromJson(json['landing_page_links'])
+        ? LandingPageLinks.fromJson(
+            json['landing_page_links'] as Map<String, dynamic>,
+          )
         : null;
-    loyaltyPointExchangeRate = json['loyalty_point_exchange_rate'];
+    loyaltyPointExchangeRate = json['loyalty_point_exchange_rate'] as int?;
     loyaltyPointItemPurchasePoint =
-        json['loyalty_point_item_purchase_point']?.toDouble();
-    loyaltyPointStatus = json['loyalty_point_status'];
-    minimumPointToTransfer = json['loyalty_point_minimum_point'];
-    customerWalletStatus = json['customer_wallet_status'];
-    dmTipsStatus = json['dm_tips_status'];
-    refEarningStatus = json['ref_earning_status'];
-    refundActiveStatus = json['refund_active_status'];
-    refEarningExchangeRate = json['ref_earning_exchange_rate']?.toDouble();
+        json['loyalty_point_item_purchase_point'] as num?;
+    loyaltyPointStatus = json['loyalty_point_status'] as int?;
+    minimumPointToTransfer = json['loyalty_point_minimum_point'] as int?;
+    customerWalletStatus = json['customer_wallet_status'] as int?;
+    dmTipsStatus = json['dm_tips_status'] as int?;
+    refEarningStatus = json['ref_earning_status'] as int?;
+    refundActiveStatus = json['refund_active_status'] as bool?;
+    refEarningExchangeRate = json['ref_earning_exchange_rate'] as num?;
     if (json['social_login'] != null) {
       socialLogin = <SocialLogin>[];
       json['social_login'].forEach((v) {
-        socialLogin!.add(SocialLogin.fromJson(v));
+        socialLogin!.add(SocialLogin.fromJson(v as Map<String, dynamic>));
       });
     }
     if (json['apple_login'] != null) {
       appleLogin = <SocialLogin>[];
       json['apple_login'].forEach((v) {
-        appleLogin!.add(SocialLogin.fromJson(v));
+        appleLogin!.add(SocialLogin.fromJson(v as Map<String, dynamic>));
       });
     }
-    refundPolicyStatus = json['refund_policy'];
-    cancellationPolicyStatus = json['cancelation_policy'];
-    shippingPolicyStatus = json['shipping_policy'];
-    prescriptionStatus = json['prescription_order_status'];
-    taxIncluded = json['tax_included'];
-    cookiesText = json['cookies_text'];
-    homeDeliveryStatus = json['home_delivery_status'];
-    takeawayStatus = json['takeaway_status'];
-    dineInStatus = json['dine_in_status'];
+    refundPolicyStatus = json['refund_policy'] as int?;
+    cancellationPolicyStatus = json['cancelation_policy'] as int?;
+    shippingPolicyStatus = json['shipping_policy'] as int?;
+    prescriptionStatus = json['prescription_order_status'] as bool?;
+    taxIncluded = json['tax_included'] as int?;
+    cookiesText = json['cookies_text'] as String?;
+    homeDeliveryStatus = json['home_delivery_status'] as int?;
+    takeawayStatus = json['takeaway_status'] as int?;
     partialPaymentStatus = json['partial_payment_status'] == 1;
-    partialPaymentMethod = json['partial_payment_method'];
+    partialPaymentMethod = json['partial_payment_method'] as String?;
     additionalChargeStatus = json['additional_charge_status'] == 1;
-    additionalChargeName = json['additional_charge_name'];
+    additionalChargeName = json['additional_charge_name'] as String?;
     additionCharge = json['additional_charge'] as num?;
     if (json['active_payment_method_list'] != null) {
       activePaymentMethodList = <PaymentBody>[];
       json['active_payment_method_list'].forEach((v) {
-        activePaymentMethodList!.add(PaymentBody.fromJson(v));
+        activePaymentMethodList!.add(
+          PaymentBody.fromJson(v as Map<String, dynamic>),
+        );
       });
     }
     digitalPaymentInfo = json['digital_payment_info'] != null
-        ? DigitalPaymentInfo.fromJson(json['digital_payment_info'])
+        ? DigitalPaymentInfo.fromJson(
+            json['digital_payment_info'] as Map<String, dynamic>,
+          )
         : null;
     addFundStatus = json['add_fund_status'] == 1;
     offlinePaymentStatus = json['offline_payment_status'] == 1;
     guestCheckoutStatus = json['guest_checkout_status'] == 1;
-    adminCommission = json['admin_commission']?.toDouble();
-    subscriptionFreeTrialDays = json['subscription_free_trial_days'];
-    subscriptionFreeTrialStatus =
-        json['subscription_free_trial_status'] == 1 ? true : false;
-    subscriptionBusinessModel = json['subscription_business_model'];
-    commissionBusinessModel = json['commission_business_model'];
-    subscriptionFreeTrialType = json['subscription_free_trial_type'];
+    adminCommission = json['admin_commission'] as num?;
+    subscriptionFreeTrialDays = json['subscription_free_trial_days'] as int?;
+    subscriptionFreeTrialStatus = json['subscription_free_trial_status'] == 1;
+    subscriptionBusinessModel = json['subscription_business_model'] as int?;
+    commissionBusinessModel = json['commission_business_model'] as int?;
+    subscriptionFreeTrialType = json['subscription_free_trial_type'] as String?;
     countryPickerStatus = json['country_picker_status'] == 1;
     firebaseOtpVerification = json['firebase_otp_verification'] == 1;
     centralizeLoginSetup = json['centralize_login'] != null
-        ? CentralizeLoginSetup.fromJson(json['centralize_login'])
+        ? CentralizeLoginSetup.fromJson(
+            json['centralize_login'] as Map<String, dynamic>,
+          )
         : null;
-    vehicleDistanceMinPrice = json['vehicle_distance_min']?.toDouble();
-    vehicleHourlyMinPrice = json['vehicle_hourly_min']?.toDouble();
+    vehicleDistanceMinPrice = json['vehicle_distance_min'] as num?;
+    vehicleHourlyMinPrice = json['vehicle_hourly_min'] as num?;
     adminFreeDelivery = json['admin_free_delivery'] != null
-        ? AdminFreeDelivery.fromJson(json['admin_free_delivery'])
+        ? AdminFreeDelivery.fromJson(
+            json['admin_free_delivery'] as Map<String, dynamic>,
+          )
         : null;
-    isSmsActive = json['is_sms_active'];
-    isMailActive = json['is_mail_active'];
+    isSmsActive = json['is_sms_active'] as bool?;
+    isMailActive = json['is_mail_active'] as bool?;
   }
   String? businessName;
   String? logoFullUrl;
@@ -280,7 +289,6 @@ class ConfigModel {
   String? cookiesText;
   int? homeDeliveryStatus;
   int? takeawayStatus;
-  int? dineInStatus;
   bool? partialPaymentStatus;
   String? partialPaymentMethod;
   bool? additionalChargeStatus;
@@ -307,7 +315,7 @@ class ConfigModel {
   bool? isMailActive;
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = <String, dynamic>{};
+    final data = <String, dynamic>{};
     data['business_name'] = businessName;
     data['logo_full_url'] = logoFullUrl;
     data['address'] = address;
@@ -381,15 +389,15 @@ class ConfigModel {
     data['cookies_text'] = cookiesText;
     data['home_delivery_status'] = homeDeliveryStatus;
     data['takeaway_status'] = takeawayStatus;
-    data['dine_in_status'] = dineInStatus;
     data['partial_payment_status'] = partialPaymentStatus;
     data['partial_payment_method'] = partialPaymentMethod;
     data['additional_charge_status'] = additionalChargeStatus;
     data['additional_charge_name'] = additionalChargeName;
     data['additional_charge'] = additionCharge;
     if (activePaymentMethodList != null) {
-      data['active_payment_method_list'] =
-          activePaymentMethodList!.map((v) => v.toJson()).toList();
+      data['active_payment_method_list'] = activePaymentMethodList!
+          .map((v) => v.toJson())
+          .toList();
     }
     if (digitalPaymentInfo != null) {
       data['digital_payment_info'] = digitalPaymentInfo!.toJson();
@@ -446,28 +454,28 @@ class BaseUrls {
   });
 
   BaseUrls.fromJson(Map<String, dynamic> json) {
-    itemImageUrl = json['item_image_url'];
-    customerImageUrl = json['customer_image_url'];
-    bannerImageUrl = json['banner_image_url'];
-    categoryImageUrl = json['category_image_url'];
-    reviewImageUrl = json['review_image_url'];
-    notificationImageUrl = json['notification_image_url'];
-    vendorImageUrl = json['vendor_image_url'];
-    storeImageUrl = json['store_image_url'];
-    storeCoverPhotoUrl = json['store_cover_photo_url'];
-    deliveryManImageUrl = json['delivery_man_image_url'];
-    chatImageUrl = json['chat_image_url'];
-    campaignImageUrl = json['campaign_image_url'];
-    moduleImageUrl = json['module_image_url'];
-    orderAttachmentUrl = json['order_attachment_url'];
-    parcelCategoryImageUrl = json['parcel_category_image_url'];
-    landingPageImageUrl = json['landing_page_image_url'];
-    businessLogoUrl = json['business_logo_url'];
-    refundImageUrl = json['refund_image_url'];
-    vehicleImageUrl = json['vehicle_image_url'];
-    vehicleBrandImageUrl = json['vehicle_brand_image_url'];
-    gatewayImageUrl = json['gateway_image_url'];
-    brandImageUrl = json['brand_image_url'];
+    itemImageUrl = json['item_image_url'] as String?;
+    customerImageUrl = json['customer_image_url'] as String?;
+    bannerImageUrl = json['banner_image_url'] as String?;
+    categoryImageUrl = json['category_image_url'] as String?;
+    reviewImageUrl = json['review_image_url'] as String?;
+    notificationImageUrl = json['notification_image_url'] as String?;
+    vendorImageUrl = json['vendor_image_url'] as String?;
+    storeImageUrl = json['store_image_url'] as String?;
+    storeCoverPhotoUrl = json['store_cover_photo_url'] as String?;
+    deliveryManImageUrl = json['delivery_man_image_url'] as String?;
+    chatImageUrl = json['chat_image_url'] as String?;
+    campaignImageUrl = json['campaign_image_url'] as String?;
+    moduleImageUrl = json['module_image_url'] as String?;
+    orderAttachmentUrl = json['order_attachment_url'] as String?;
+    parcelCategoryImageUrl = json['parcel_category_image_url'] as String?;
+    landingPageImageUrl = json['landing_page_image_url'] as String?;
+    businessLogoUrl = json['business_logo_url'] as String?;
+    refundImageUrl = json['refund_image_url'] as String?;
+    vehicleImageUrl = json['vehicle_image_url'] as String?;
+    vehicleBrandImageUrl = json['vehicle_brand_image_url'] as String?;
+    gatewayImageUrl = json['gateway_image_url'] as String?;
+    brandImageUrl = json['brand_image_url'] as String?;
   }
   String? itemImageUrl;
   String? customerImageUrl;
@@ -493,7 +501,7 @@ class BaseUrls {
   String? brandImageUrl;
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = <String, dynamic>{};
+    final data = <String, dynamic>{};
     data['item_image_url'] = itemImageUrl;
     data['customer_image_url'] = customerImageUrl;
     data['banner_image_url'] = bannerImageUrl;
@@ -524,14 +532,14 @@ class DefaultLocation {
   DefaultLocation({this.lat, this.lng});
 
   DefaultLocation.fromJson(Map<String, dynamic> json) {
-    lat = json['lat'];
-    lng = json['lng'];
+    lat = json['lat'] as String?;
+    lng = json['lng'] as String?;
   }
   String? lat;
   String? lng;
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = <String, dynamic>{};
+    final data = <String, dynamic>{};
     data['lat'] = lat;
     data['lng'] = lng;
     return data;
@@ -542,14 +550,14 @@ class Language {
   Language({this.key, this.value});
 
   Language.fromJson(Map<String, dynamic> json) {
-    key = json['key'];
-    value = json['value'];
+    key = json['key'] as String?;
+    value = json['value'] as String?;
   }
   String? key;
   String? value;
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = <String, dynamic>{};
+    final data = <String, dynamic>{};
     data['key'] = key;
     data['value'] = value;
     return data;
@@ -560,18 +568,18 @@ class ModuleConfig {
   ModuleConfig({this.moduleType, this.module});
 
   ModuleConfig.fromJson(Map<String, dynamic> json) {
-    "==>>>>>ModuleConfig.fromJson ${Module.fromJson(json[json['module_type'].cast<String>()![0]]).stock}"
-        .print;
-    moduleType = json['module_type'].cast<String>();
+    moduleType = (json['module_type'] as List)
+        .map((e) => e.toString())
+        .toList();
     module = json[moduleType![0]] != null
-        ? Module.fromJson(json[moduleType![0]])
+        ? Module.fromJson(json[moduleType![0]] as Map<String, dynamic>)
         : null;
   }
   List<String>? moduleType;
   Module? module;
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = <String, dynamic>{};
+    final data = <String, dynamic>{};
     data['module_type'] = moduleType;
     if (module != null) {
       data[moduleType![0]] = module!.toJson();
@@ -596,17 +604,18 @@ class Module {
   });
 
   Module.fromJson(Map<String, dynamic> json) {
-    orderPlaceToScheduleInterval = json['order_place_to_schedule_interval'];
-    addOn = json['add_on'];
-    stock = json['stock'];
-    vegNonVeg = json['veg_non_veg'];
-    unit = json['unit'];
-    orderAttachment = json['order_attachment'];
-    showRestaurantText = json['show_restaurant_text'];
-    isParcel = json['is_parcel'];
-    isTaxi = json['is_taxi'] ?? false;
-    newVariation = json['new_variation'];
-    description = json['description'];
+    orderPlaceToScheduleInterval =
+        json['order_place_to_schedule_interval'] as bool?;
+    addOn = json['add_on'] as bool?;
+    stock = json['stock'] as bool?;
+    vegNonVeg = json['veg_non_veg'] as bool?;
+    unit = json['unit'] as bool?;
+    orderAttachment = json['order_attachment'] as bool?;
+    showRestaurantText = json['show_restaurant_text'] as bool?;
+    isParcel = json['is_parcel'] as bool?;
+    isTaxi = json['is_taxi'] as bool?;
+    newVariation = json['new_variation'] as bool?;
+    description = json['description'] as String?;
   }
   bool? orderPlaceToScheduleInterval;
   bool? addOn;
@@ -621,7 +630,7 @@ class Module {
   String? description;
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = <String, dynamic>{};
+    final data = <String, dynamic>{};
     data['order_place_to_schedule_interval'] = orderPlaceToScheduleInterval;
     data['add_on'] = addOn;
     data['stock'] = stock;
@@ -641,12 +650,12 @@ class OrderStatus {
   OrderStatus({this.accepted});
 
   OrderStatus.fromJson(Map<String, dynamic> json) {
-    accepted = json['accepted'];
+    accepted = json['accepted'] as bool?;
   }
   bool? accepted;
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = <String, dynamic>{};
+    final data = <String, dynamic>{};
     data['accepted'] = accepted;
     return data;
   }
@@ -656,14 +665,14 @@ class LandingPageSettings {
   LandingPageSettings({this.mobileAppSectionImage, this.topContentImage});
 
   LandingPageSettings.fromJson(Map<String, dynamic> json) {
-    mobileAppSectionImage = json['mobile_app_section_image'];
-    topContentImage = json['top_content_image'];
+    mobileAppSectionImage = json['mobile_app_section_image'] as String?;
+    topContentImage = json['top_content_image'] as String?;
   }
   String? mobileAppSectionImage;
   String? topContentImage;
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = <String, dynamic>{};
+    final data = <String, dynamic>{};
     data['mobile_app_section_image'] = mobileAppSectionImage;
     data['top_content_image'] = topContentImage;
     return data;
@@ -671,18 +680,13 @@ class LandingPageSettings {
 }
 
 class SocialMedia {
-  SocialMedia({
-    this.id,
-    this.name,
-    this.link,
-    this.status,
-  });
+  SocialMedia({this.id, this.name, this.link, this.status});
 
   SocialMedia.fromJson(Map<String, dynamic> json) {
-    id = json['id'];
-    name = json['name'];
-    link = json['link'];
-    status = json['status'];
+    id = json['id'] as int?;
+    name = json['name'] as String?;
+    link = json['link'] as String?;
+    status = json['status'] as int?;
   }
   int? id;
   String? name;
@@ -690,7 +694,7 @@ class SocialMedia {
   int? status;
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = <String, dynamic>{};
+    final data = <String, dynamic>{};
     data['id'] = id;
     data['name'] = name;
     data['link'] = link;
@@ -708,10 +712,10 @@ class LandingPageLinks {
   });
 
   LandingPageLinks.fromJson(Map<String, dynamic> json) {
-    appUrlAndroidStatus = json['app_url_android_status'].toString();
-    appUrlAndroid = json['app_url_android'];
-    appUrlIosStatus = json['app_url_ios_status'].toString();
-    appUrlIos = json['app_url_ios'];
+    appUrlAndroidStatus = json['app_url_android_status'] as String?;
+    appUrlAndroid = json['app_url_android'] as String?;
+    appUrlIosStatus = json['app_url_ios_status'] as String?;
+    appUrlIos = json['app_url_ios'] as String?;
   }
   String? appUrlAndroidStatus;
   String? appUrlAndroid;
@@ -719,7 +723,7 @@ class LandingPageLinks {
   String? appUrlIos;
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = <String, dynamic>{};
+    final data = <String, dynamic>{};
     data['app_url_android_status'] = appUrlAndroidStatus;
     data['app_url_android'] = appUrlAndroid;
     data['app_url_ios_status'] = appUrlIosStatus;
@@ -732,10 +736,10 @@ class SocialLogin {
   SocialLogin({this.loginMedium, this.status, this.clientId, this.redirectUrl});
 
   SocialLogin.fromJson(Map<String, dynamic> json) {
-    loginMedium = json['login_medium'];
-    status = json['status'];
-    clientId = json['client_id'];
-    redirectUrl = json['redirect_url_flutter'];
+    loginMedium = json['login_medium'] as String?;
+    status = json['status'] as bool?;
+    clientId = json['client_id'] as String?;
+    redirectUrl = json['redirect_url_flutter'] as String?;
   }
   String? loginMedium;
   bool? status;
@@ -743,7 +747,7 @@ class SocialLogin {
   String? redirectUrl;
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = <String, dynamic>{};
+    final data = <String, dynamic>{};
     data['login_medium'] = loginMedium;
     data['status'] = status;
     data['client_id'] = clientId;
@@ -756,16 +760,16 @@ class PaymentBody {
   PaymentBody({this.getWay, this.getWayTitle, this.getWayImageFullUrl});
 
   PaymentBody.fromJson(Map<String, dynamic> json) {
-    getWay = json['gateway'];
-    getWayTitle = json['gateway_title'];
-    getWayImageFullUrl = json['gateway_image_full_url'] ?? '';
+    getWay = json['gateway'] as String?;
+    getWayTitle = json['gateway_title'] as String?;
+    getWayImageFullUrl = json['gateway_image_full_url'] as String?;
   }
   String? getWay;
   String? getWayTitle;
   String? getWayImageFullUrl;
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = <String, dynamic>{};
+    final data = <String, dynamic>{};
     data['gateway'] = getWay;
     data['gateway_title'] = getWayTitle;
     data['gateway_image_full_url'] = getWayImageFullUrl;
@@ -781,16 +785,16 @@ class DigitalPaymentInfo {
   });
 
   DigitalPaymentInfo.fromJson(Map<String, dynamic> json) {
-    digitalPayment = json['digital_payment'];
-    pluginPaymentGateways = json['plugin_payment_gateways'];
-    defaultPaymentGateways = json['default_payment_gateways'];
+    digitalPayment = json['digital_payment'] as bool?;
+    pluginPaymentGateways = json['plugin_payment_gateways'] as bool?;
+    defaultPaymentGateways = json['default_payment_gateways'] as bool?;
   }
   bool? digitalPayment;
   bool? pluginPaymentGateways;
   bool? defaultPaymentGateways;
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = <String, dynamic>{};
+    final data = <String, dynamic>{};
     data['digital_payment'] = digitalPayment;
     data['plugin_payment_gateways'] = pluginPaymentGateways;
     data['default_payment_gateways'] = defaultPaymentGateways;
@@ -802,14 +806,14 @@ class BusinessPlan {
   BusinessPlan({this.commission, this.subscription});
 
   BusinessPlan.fromJson(Map<String, dynamic> json) {
-    commission = json['commission'];
-    subscription = json['subscription'];
+    commission = json['commission'] as int?;
+    subscription = json['subscription'] as int?;
   }
   int? commission;
   int? subscription;
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = <String, dynamic>{};
+    final data = <String, dynamic>{};
     data['commission'] = commission;
     data['subscription'] = subscription;
     return data;
@@ -848,7 +852,7 @@ class CentralizeLoginSetup {
   bool? phoneVerificationStatus;
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = <String, dynamic>{};
+    final data = <String, dynamic>{};
     data['manual_login_status'] = manualLoginStatus;
     data['otp_login_status'] = otpLoginStatus;
     data['social_login_status'] = socialLoginStatus;
@@ -862,32 +866,22 @@ class CentralizeLoginSetup {
 }
 
 class AdminFreeDelivery {
-  AdminFreeDelivery({
-    this.status,
-    this.type,
-    this.freeDeliveryOver,
-    this.freeDeliveryKm,
-  });
+  AdminFreeDelivery({this.status, this.type, this.freeDeliveryOver});
 
-  factory AdminFreeDelivery.fromJson(Map<String, dynamic> json) {
-    return AdminFreeDelivery(
-      status: json['status'],
-      type: json['type'],
-      freeDeliveryOver: json['free_delivery_over'] as num?,
-      freeDeliveryKm: json['free_delivery_km'] as num?,
-    );
+  AdminFreeDelivery.fromJson(Map<String, dynamic> json) {
+    status = json['status'] as bool?;
+    type = json['type'] as String?;
+    freeDeliveryOver = json['free_delivery_over'] as num?;
   }
-  final bool? status;
-  final String? type;
-  final num? freeDeliveryKm;
-  final num? freeDeliveryOver;
+  bool? status;
+  String? type;
+  num? freeDeliveryOver;
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = <String, dynamic>{};
+    final data = <String, dynamic>{};
     data['status'] = status;
     data['type'] = type;
     data['free_delivery_over'] = freeDeliveryOver;
-    data['free_delivery_km'] = freeDeliveryKm;
     return data;
   }
 }

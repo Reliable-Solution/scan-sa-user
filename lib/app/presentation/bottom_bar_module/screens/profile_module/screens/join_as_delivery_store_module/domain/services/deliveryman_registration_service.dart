@@ -1,0 +1,101 @@
+import 'package:get/get.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:scan_sa_user/api/api_client.dart';
+import 'package:scan_sa_user/app/presentation/auth_module/auth_repo/auth_repository_interface.dart';
+import 'package:scan_sa_user/app/presentation/bottom_bar_module/screens/profile_module/screens/join_as_delivery_store_module/domain/models/delivery_man_body.dart';
+import 'package:scan_sa_user/app/presentation/bottom_bar_module/screens/profile_module/screens/join_as_delivery_store_module/domain/models/delivery_man_vehicles_model.dart';
+import 'package:scan_sa_user/app/presentation/bottom_bar_module/screens/profile_module/screens/join_as_delivery_store_module/domain/repositories/deliveryman_registration_repository_interface.dart';
+import 'package:scan_sa_user/app/presentation/bottom_bar_module/screens/profile_module/screens/join_as_delivery_store_module/domain/services/deliveryman_registration_service_interface.dart';
+import 'package:scan_sa_user/app/presentation/location_module/models/zone_data_model.dart';
+import 'package:scan_sa_user/app/widgets/custom_snackbar.dart';
+import 'package:scan_sa_user/common/models/module_model.dart';
+
+class DeliverymanRegistrationService
+    implements DeliverymanRegistrationServiceInterface {
+  DeliverymanRegistrationService({
+    required this.deliverymanRegistrationRepoInterface,
+    required this.authRepositoryInterface,
+  });
+  final DeliverymanRegistrationRepositoryInterface
+  deliverymanRegistrationRepoInterface;
+  final AuthRepositoryInterface authRepositoryInterface;
+
+  @override
+  Future<List<ZoneDataModel>?> getZoneList() async {
+    return (await deliverymanRegistrationRepoInterface.getList())
+        as List<ZoneDataModel>?;
+  }
+
+  @override
+  Future<List<ModuleModel>?> getModules(int? zoneId) async {
+    return (await deliverymanRegistrationRepoInterface.getList(
+          isZone: false,
+          zoneId: zoneId,
+        ))
+        as List<ModuleModel>?;
+  }
+
+  @override
+  Future<List<DeliveryManVehicleModel>?> getVehicleList() async {
+    return (await deliverymanRegistrationRepoInterface.getList(
+          isZone: false,
+          isVehicle: true,
+        ))
+        as List<DeliveryManVehicleModel>?;
+  }
+
+  @override
+  int? prepareSelectedZoneIndex(
+    List<int>? zoneIds,
+    List<ZoneDataModel>? zoneList,
+  ) {
+    int? selectedZoneIndex = 0;
+    for (var index = 0; index < zoneList!.length; index++) {
+      if (zoneIds!.contains(zoneList[index].id)) {
+        selectedZoneIndex = index;
+        break;
+      }
+    }
+    return selectedZoneIndex;
+  }
+
+  @override
+  List<int?>? prepareVehicleIds(List<DeliveryManVehicleModel>? vehicleList) {
+    final vehicleIds = <int?>[];
+    vehicleIds.add(0);
+    for (final vehicle in vehicleList!) {
+      vehicleIds.add(vehicle.id);
+    }
+    return vehicleIds;
+  }
+
+  @override
+  Future<bool> registerDeliveryMan(
+    DeliveryManBody deliveryManBody,
+    List<MultipartBody> multiParts,
+  ) async {
+    final success = await deliverymanRegistrationRepoInterface
+        .registerDeliveryMan(deliveryManBody, multiParts);
+    if (success) {
+      // Get.offAllNamed(RouteHelper.getInitialRoute());
+      showCustomSnackBar(
+        'delivery_man_registration_successful'.tr,
+        isError: false,
+      );
+    }
+    return success;
+  }
+
+  @override
+  List<MultipartBody> prepareMultipart(
+    XFile? pickedImage,
+    List<XFile> pickedIdentities,
+  ) {
+    final multiParts = <MultipartBody>[];
+    multiParts.add(MultipartBody('image', pickedImage));
+    for (final file in pickedIdentities) {
+      multiParts.add(MultipartBody('identity_image[]', file));
+    }
+    return multiParts;
+  }
+}

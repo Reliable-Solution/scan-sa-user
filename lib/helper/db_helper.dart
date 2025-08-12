@@ -1,9 +1,9 @@
-import 'package:scan_sa_user/local/cache_response.dart';
+import 'package:scan_sa_user/helper/local/cache_response.dart';
 
 final database = AppDatabase();
 
 class DbHelper {
-  static insertOrUpdate({
+  static Future<void> insertOrUpdate({
     required String id,
     required CacheResponseCompanion data,
   }) async {

@@ -1,17 +1,16 @@
 import 'dart:convert';
 import 'dart:developer';
 import 'package:flutter/foundation.dart';
+import 'package:get/get.dart';
 import 'package:get/get_connect/http/src/request/request.dart';
+import 'package:http/http.dart' as http;
+import 'package:image_picker/image_picker.dart';
 import 'package:scan_sa_user/api/api_checker.dart';
-import 'package:scan_sa_user/features/address/domain/models/address_model.dart';
+import 'package:scan_sa_user/common/models/address_model.dart';
 import 'package:scan_sa_user/common/models/error_response.dart';
 import 'package:scan_sa_user/common/models/module_model.dart';
-import 'package:scan_sa_user/helper/responsive_helper.dart';
-import 'package:scan_sa_user/util/app_constants.dart';
-import 'package:get/get.dart';
-import 'package:image_picker/image_picker.dart';
+import 'package:scan_sa_user/utils/app_constants.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:http/http.dart' as http;
 
 class ApiClient extends GetxService {
   ApiClient({required this.appBaseUrl, required this.sharedPreferences}) {
@@ -22,7 +21,8 @@ class ApiClient extends GetxService {
     AddressModel? addressModel;
     try {
       addressModel = AddressModel.fromJson(
-        jsonDecode(sharedPreferences.getString(AppConstants.userAddress)!),
+        jsonDecode(sharedPreferences.getString(AppConstants.userAddress)!)
+            as Map<String, dynamic>,
       );
     } catch (_) {}
     int? moduleID;
@@ -30,18 +30,19 @@ class ApiClient extends GetxService {
         sharedPreferences.containsKey(AppConstants.moduleId)) {
       try {
         moduleID = ModuleModel.fromJson(
-          jsonDecode(sharedPreferences.getString(AppConstants.moduleId)!),
+          jsonDecode(sharedPreferences.getString(AppConstants.moduleId)!)
+              as Map<String, dynamic>,
         ).id;
       } catch (_) {}
     }
     updateHeader(
-      token,
-      addressModel?.zoneIds,
-      addressModel?.areaIds,
-      sharedPreferences.getString(AppConstants.languageCode),
-      moduleID,
-      addressModel?.latitude,
-      addressModel?.longitude,
+      token: token,
+      zoneIDs: addressModel?.zoneIds,
+      operationIds: addressModel?.areaIds,
+      languageCode: sharedPreferences.getString(AppConstants.languageCode),
+      moduleID: moduleID,
+      latitude: addressModel?.latitude,
+      longitude: addressModel?.longitude,
     );
   }
   final String appBaseUrl;
@@ -52,28 +53,29 @@ class ApiClient extends GetxService {
   String? token;
   late Map<String, String> _mainHeaders;
 
-  Map<String, String> updateHeader(
+  Map<String, String> updateHeader({
     String? token,
     List<int>? zoneIDs,
     List<int>? operationIds,
     String? languageCode,
     int? moduleID,
     String? latitude,
-    String? longitude, {
+    String? longitude,
     bool setHeader = true,
   }) {
-    Map<String, String> header = {};
+    final header = <String, String>{};
 
     if (moduleID != null ||
         sharedPreferences.getString(AppConstants.cacheModuleId) != null) {
       header.addAll({
         AppConstants.moduleId:
-            '${moduleID ?? ModuleModel.fromJson(jsonDecode(sharedPreferences.getString(AppConstants.cacheModuleId)!)).id}',
+            '${moduleID ?? ModuleModel.fromJson(jsonDecode(sharedPreferences.getString(AppConstants.cacheModuleId)!) as Map<String, dynamic>).id}',
       });
     }
     header.addAll({
       'Content-Type': 'application/json; charset=UTF-8',
       AppConstants.zoneId: zoneIDs != null ? jsonEncode(zoneIDs) : '',
+      AppConstants.moduleId: '1',
 
       ///this will add in ride module
       // AppConstants.operationAreaId: operationIds != null ? jsonEncode(operationIds) : '',
@@ -95,9 +97,10 @@ class ApiClient extends GetxService {
     Map<String, String> headers, [
     dynamic body,
   ]) {
-    final headerStrings =
-        headers.entries.map((e) => "-H '${e.key}: ${e.value}'").join(' ');
-    String curl = "curl -X $method '$uri' $headerStrings";
+    final headerStrings = headers.entries
+        .map((e) => "-H '${e.key}: ${e.value}'")
+        .join(' ');
+    var curl = "curl -X $method '$uri' $headerStrings";
     if (body != null) {
       curl += " -d '${jsonEncode(body)}'";
     }
@@ -106,36 +109,34 @@ class ApiClient extends GetxService {
 
   Map<String, String> getHeader() => _mainHeaders;
 
-  Future<Response> getData(
+  Future<Response<dynamic>> getData(
     String uri, {
     Map<String, dynamic>? query,
     Map<String, String>? headers,
     bool handleError = true,
   }) async {
     try {
-      final fullUri =
-          Uri.parse(appBaseUrl + uri).replace(queryParameters: query);
+      final fullUri = Uri.parse(
+        appBaseUrl + uri,
+      ).replace(queryParameters: query);
       final requestHeaders = headers ?? _mainHeaders;
 
-      printCurl("GET", fullUri, requestHeaders);
+      printCurl('GET', fullUri, requestHeaders);
 
-      http.Response response = await http
-          .get(
-            fullUri,
-            headers: requestHeaders,
-          )
+      final response = await http
+          .get(fullUri, headers: requestHeaders)
           .timeout(Duration(seconds: timeoutInSeconds));
 
-      return handleResponse(response, uri, handleError);
+      return handleResponse(response, uri, handleError: handleError);
     } catch (e) {
       if (kDebugMode) {
-        debugPrint('------------${e.toString()}');
+        debugPrint('------------$e');
       }
       return Response(statusCode: 1, statusText: noInternetMessage);
     }
   }
 
-  Future<Response> postData(
+  Future<Response<dynamic>> postData(
     String uri,
     dynamic body, {
     Map<String, String>? headers,
@@ -146,7 +147,7 @@ class ApiClient extends GetxService {
       debugPrint('====> API Call: $uri\nHeader: ${headers ?? _mainHeaders}');
       debugPrint('====> API Body: $body');
 
-      Map<dynamic, dynamic> newBody = {};
+      final newBody = <dynamic, dynamic>{};
       if (body != null) {
         body.forEach((key, value) {
           if (value != null && value.toString().isNotEmpty) {
@@ -156,23 +157,23 @@ class ApiClient extends GetxService {
       }
       final fullUri = Uri.parse(appBaseUrl + uri);
       final requestHeaders = headers ?? _mainHeaders;
-      printCurl("POST", fullUri, requestHeaders, newBody);
-      http.Response response = await http
+      printCurl('POST', fullUri, requestHeaders, newBody);
+      final response = await http
           .post(
             Uri.parse(appBaseUrl + uri),
             body: jsonEncode(newBody),
             headers: headers ?? _mainHeaders,
           )
           .timeout(Duration(seconds: timeout ?? timeoutInSeconds));
-      return handleResponse(response, uri, handleError);
+      return handleResponse(response, uri, handleError: handleError);
     } catch (e) {
       return Response(statusCode: 1, statusText: noInternetMessage);
     }
   }
 
-  Future<Response> postMultipartData(
+  Future<Response<dynamic>> postMultipartData(
     String uri,
-    Map<String, String> body,
+    Map<String, String?> body,
     List<MultipartBody> multipartBody, {
     Map<String, String>? headers,
     bool handleError = true,
@@ -180,48 +181,49 @@ class ApiClient extends GetxService {
     try {
       debugPrint('====> API Call: $uri\nHeader: ${headers ?? _mainHeaders}');
       debugPrint('====> API Body: $body with ${multipartBody.length} picture');
-      Uri fullUri = Uri.parse(appBaseUrl + uri);
-      Map<String, String> newBody1 = {};
+      final fullUri = Uri.parse(appBaseUrl + uri);
+      final newBody1 = <String, String>{};
       body.forEach((s, i) {
-        if (i.isNotEmpty) {
-          newBody1.addAll({s: i});
+        if (i?.isNotEmpty ?? false) {
+          newBody1.addAll({s: i ?? ''});
         }
       });
 
-      printCurl("POST", fullUri, headers ?? _mainHeaders, newBody1);
+      printCurl('POST', fullUri, headers ?? _mainHeaders, newBody1);
 
-      http.MultipartRequest request =
-          http.MultipartRequest('POST', Uri.parse(appBaseUrl + uri));
+      final request = http.MultipartRequest(
+        'POST',
+        Uri.parse(appBaseUrl + uri),
+      );
       request.headers.addAll(headers ?? _mainHeaders);
-      for (MultipartBody multipart in multipartBody) {
+      for (final multipart in multipartBody) {
         if (multipart.file != null) {
-          Uint8List list = await multipart.file!.readAsBytes();
+          final list = await multipart.file!.readAsBytes();
           request.files.add(
             http.MultipartFile(
               multipart.key,
               multipart.file!.readAsBytes().asStream(),
               list.length,
-              filename: '${DateTime.now().toString()}.png',
+              filename: '${DateTime.now()}.png',
             ),
           );
         }
       }
-      Map<String, String> newBody = {};
+      final newBody = <String, String>{};
       body.forEach((s, i) {
-        if (i.isNotEmpty) {
-          newBody.addAll({s: i});
+        if (i?.isNotEmpty ?? false) {
+          newBody.addAll({s: i ?? ''});
         }
       });
       request.fields.addAll(newBody);
-      http.Response response =
-          await http.Response.fromStream(await request.send());
-      return handleResponse(response, uri, handleError);
+      final response = await http.Response.fromStream(await request.send());
+      return handleResponse(response, uri, handleError: handleError);
     } catch (e) {
       return Response(statusCode: 1, statusText: noInternetMessage);
     }
   }
 
-  Future<Response> putData(
+  Future<Response<dynamic>> putData(
     String uri,
     dynamic body, {
     Map<String, String>? headers,
@@ -233,21 +235,21 @@ class ApiClient extends GetxService {
       final fullUri = Uri.parse(appBaseUrl + uri);
       final requestHeaders = headers ?? _mainHeaders;
 
-      printCurl("PUT", fullUri, requestHeaders, body);
-      http.Response response = await http
+      printCurl('PUT', fullUri, requestHeaders, body);
+      final response = await http
           .put(
             Uri.parse(appBaseUrl + uri),
             body: jsonEncode(body),
             headers: headers ?? _mainHeaders,
           )
           .timeout(Duration(seconds: timeoutInSeconds));
-      return handleResponse(response, uri, handleError);
+      return handleResponse(response, uri, handleError: handleError);
     } catch (e) {
       return Response(statusCode: 1, statusText: noInternetMessage);
     }
   }
 
-  Future<Response> deleteData(
+  Future<Response<dynamic>> deleteData(
     String uri, {
     Map<String, String>? headers,
     bool handleError = true,
@@ -257,31 +259,28 @@ class ApiClient extends GetxService {
       final fullUri = Uri.parse(appBaseUrl + uri);
       final requestHeaders = headers ?? _mainHeaders;
 
-      printCurl("DELETE", fullUri, requestHeaders);
-      http.Response response = await http
-          .delete(
-            Uri.parse(appBaseUrl + uri),
-            headers: headers ?? _mainHeaders,
-          )
+      printCurl('DELETE', fullUri, requestHeaders);
+      final response = await http
+          .delete(Uri.parse(appBaseUrl + uri), headers: headers ?? _mainHeaders)
           .timeout(Duration(seconds: timeoutInSeconds));
-      return handleResponse(response, uri, handleError);
+      return handleResponse(response, uri, handleError: handleError);
     } catch (e) {
       return Response(statusCode: 1, statusText: noInternetMessage);
     }
   }
 
-  Response handleResponse(
+  Response<dynamic> handleResponse(
     http.Response response,
-    String uri,
-    bool handleError,
-  ) {
+    String uri, {
+    bool handleError = false,
+  }) {
     dynamic body;
     try {
       body = jsonDecode(response.body);
     } catch (_) {}
-    Response response0 = Response(
+    var response0 = Response(
       body: body ?? response.body,
-      bodyString: response.body.toString(),
+      bodyString: response.body,
       request: Request(
         headers: response.request!.headers,
         method: response.request!.method,
@@ -295,7 +294,7 @@ class ApiClient extends GetxService {
         response0.body != null &&
         response0.body is! String) {
       if (response0.body.toString().startsWith('{errors: [{code:')) {
-        ErrorResponse errorResponse = ErrorResponse.fromJson(response0.body);
+        final errorResponse = ErrorResponse.fromJson(response0.body);
         response0 = Response(
           statusCode: response0.statusCode,
           body: response0.body,
@@ -305,7 +304,8 @@ class ApiClient extends GetxService {
         response0 = Response(
           statusCode: response0.statusCode,
           body: response0.body,
-          statusText: response0.body['message'],
+          statusText:
+              (response0.body as Map<String, dynamic>?)?['message'] as String?,
         );
       }
     } else if (response0.statusCode != 200 && response0.body == null) {
@@ -313,8 +313,8 @@ class ApiClient extends GetxService {
     }
 
     debugPrint('====> API Response: [${response0.statusCode}] $uri');
-    if (!ResponsiveHelper.isWeb() || response.statusCode != 500) {
-      // debugPrint('${response0.body}');
+    if (response.statusCode != 500) {
+      debugPrint('${response0.body}');
     }
     if (handleError) {
       if (response0.statusCode == 200) {

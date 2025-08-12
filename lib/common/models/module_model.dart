@@ -14,19 +14,21 @@ class ModuleModel {
   });
 
   ModuleModel.fromJson(Map<String, dynamic> json) {
-    id = json['id'];
-    moduleName = json['module_name'];
-    moduleType = json['module_type'];
-    thumbnailFullUrl = json['thumbnail_full_url'];
-    iconFullUrl = json['icon_full_url'];
-    themeId = json['theme_id'];
-    description = json['description'];
-    storesCount = json['stores_count'];
-    createdAt = json['created_at'];
-    updatedAt = json['updated_at'];
+    id = json['id'] as int?;
+    moduleName = json['module_name'] as String?;
+    moduleType = json['module_type'] as String?;
+    thumbnailFullUrl = json['thumbnail_full_url'] as String?;
+    iconFullUrl = json['icon_full_url'] as String?;
+    themeId = json['theme_id'] as int?;
+    description = json['description'] as String?;
+    storesCount = json['stores_count'] as int?;
+    createdAt = json['created_at'] as String?;
+    updatedAt = json['updated_at'] as String?;
     if (json['zones'] != null) {
       zones = <ModuleZoneData>[];
-      json['zones'].forEach((v) => zones!.add(ModuleZoneData.fromJson(v)));
+      json['zones'].forEach(
+        (v) => zones!.add(ModuleZoneData.fromJson(v as Map<String, dynamic>)),
+      );
     }
   }
   int? id;
@@ -42,7 +44,7 @@ class ModuleModel {
   List<ModuleZoneData>? zones;
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = <String, dynamic>{};
+    final data = <String, dynamic>{};
     data['id'] = id;
     data['module_name'] = moduleName;
     data['module_type'] = moduleType;
@@ -72,13 +74,13 @@ class ModuleZoneData {
   });
 
   ModuleZoneData.fromJson(Map<String, dynamic> json) {
-    id = json['id'];
-    name = json['name'];
-    status = json['status'];
-    createdAt = json['created_at'];
-    updatedAt = json['updated_at'];
-    cashOnDelivery = json['cash_on_delivery'];
-    digitalPayment = json['digital_payment'];
+    id = json['id'] as int?;
+    name = json['name'] as String?;
+    status = json['status'] as int?;
+    createdAt = json['created_at'] as String?;
+    updatedAt = json['updated_at'] as String?;
+    cashOnDelivery = json['cash_on_delivery'] as bool?;
+    digitalPayment = json['digital_payment'] as bool?;
   }
   int? id;
   String? name;
@@ -89,7 +91,7 @@ class ModuleZoneData {
   bool? digitalPayment;
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = <String, dynamic>{};
+    final data = <String, dynamic>{};
     data['id'] = id;
     data['name'] = name;
     data['status'] = status;

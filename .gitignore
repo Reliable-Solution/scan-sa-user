@@ -5,9 +5,12 @@
 *.swp
 .DS_Store
 .atom/
+.build/
 .buildlog/
 .history
 .svn/
+.swiftpm/
+migrate_working_dir/
 
 # IntelliJ related
 *.iml
@@ -26,19 +29,9 @@
 .dart_tool/
 .flutter-plugins
 .flutter-plugins-dependencies
-.packages
 .pub-cache/
 .pub/
 /build/
-.firebaserc
-firebase.json
-.firebase
-changes.tar
-changes.zip
-get_changed_files.sh
-changed_files.zip
-
-# Web related
 
 # Symbolication related
 app.*.symbols

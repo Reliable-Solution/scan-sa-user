@@ -4,9 +4,9 @@ class ErrorResponse {
   }
 
   ErrorResponse.fromJson(dynamic json) {
-    if (json["errors"] != null) {
+    if (json['errors'] != null) {
       _errors = [];
-      json["errors"].forEach((v) {
+      json['errors'].forEach((v) {
         _errors!.add(Errors.fromJson(v));
       });
     }
@@ -16,9 +16,9 @@ class ErrorResponse {
   List<Errors>? get errors => _errors;
 
   Map<String, dynamic> toJson() {
-    var map = <String, dynamic>{};
+    final map = <String, dynamic>{};
     if (_errors != null) {
-      map["errors"] = _errors!.map((v) => v.toJson()).toList();
+      map['errors'] = _errors!.map((v) => v.toJson()).toList();
     }
     return map;
   }
@@ -31,8 +31,8 @@ class Errors {
   }
 
   Errors.fromJson(dynamic json) {
-    _code = json["code"];
-    _message = json["message"];
+    _code = json['code'] as String?;
+    _message = json['message'] as String?;
   }
   String? _code;
   String? _message;
@@ -41,9 +41,9 @@ class Errors {
   String? get message => _message;
 
   Map<String, dynamic> toJson() {
-    var map = <String, dynamic>{};
-    map["code"] = _code;
-    map["message"] = _message;
+    final map = <String, dynamic>{};
+    map['code'] = _code;
+    map['message'] = _message;
     return map;
   }
 }

@@ -1,18 +1,19 @@
 import 'dart:convert';
 
 import 'package:get/get.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:scan_sa_user/common/models/address_model.dart';
 import 'package:scan_sa_user/common/models/module_model.dart';
-import 'package:scan_sa_user/features/address/domain/models/address_model.dart';
-import 'package:scan_sa_user/util/app_constants.dart';
+import 'package:scan_sa_user/utils/app_constants.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class HeaderHelper {
   static Map<String, String> featuredHeader() {
-    SharedPreferences sharedPreferences = Get.find<SharedPreferences>();
+    final sharedPreferences = Get.find<SharedPreferences>();
     AddressModel? addressModel;
     try {
       addressModel = AddressModel.fromJson(
-        jsonDecode(sharedPreferences.getString(AppConstants.userAddress)!),
+        jsonDecode(sharedPreferences.getString(AppConstants.userAddress)!)
+            as Map<String, dynamic>,
       );
     } catch (_) {}
     int? moduleID;
@@ -20,7 +21,8 @@ class HeaderHelper {
         sharedPreferences.containsKey(AppConstants.moduleId)) {
       try {
         moduleID = ModuleModel.fromJson(
-          jsonDecode(sharedPreferences.getString(AppConstants.moduleId)!),
+          jsonDecode(sharedPreferences.getString(AppConstants.moduleId)!)
+              as Map<String, dynamic>,
         ).id;
       } catch (_) {}
     }
@@ -32,7 +34,7 @@ class HeaderHelper {
       moduleID != null ? AppConstants.moduleId : '$moduleID': '',
       AppConstants.localizationKey:
           sharedPreferences.getString(AppConstants.languageCode) ??
-              AppConstants.languages[0].languageCode!,
+          AppConstants.languages[0].languageCode!,
       AppConstants.latitude: addressModel?.latitude != null
           ? jsonEncode(addressModel?.latitude)
           : '',

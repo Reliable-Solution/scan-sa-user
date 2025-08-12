@@ -1,527 +1,335 @@
-import 'dart:convert';
-import 'package:scan_sa_user/features/brands/controllers/brands_controller.dart';
-import 'package:scan_sa_user/features/brands/domain/repositories/brands_repository.dart';
-import 'package:scan_sa_user/features/brands/domain/repositories/brands_repository_interface.dart';
-import 'package:scan_sa_user/features/brands/domain/services/brands_service.dart';
-import 'package:scan_sa_user/features/brands/domain/services/brands_service_interface.dart';
-import 'package:scan_sa_user/features/business/controllers/business_controller.dart';
-import 'package:scan_sa_user/features/business/domain/repositories/business_repo.dart';
-import 'package:scan_sa_user/features/business/domain/repositories/business_repo_interface.dart';
-import 'package:scan_sa_user/features/business/domain/services/business_service.dart';
-import 'package:scan_sa_user/features/business/domain/services/business_service_interface.dart';
-import 'package:scan_sa_user/features/coupon/domain/repositories/coupon_repository.dart';
-import 'package:scan_sa_user/features/coupon/domain/repositories/coupon_repository_interface.dart';
-import 'package:scan_sa_user/features/home/controllers/advertisement_controller.dart';
-import 'package:scan_sa_user/features/home/controllers/home_controller.dart';
-import 'package:scan_sa_user/features/home/domain/repositories/advertisement_repository.dart';
-import 'package:scan_sa_user/features/home/domain/repositories/advertisement_repository_interface.dart';
-import 'package:scan_sa_user/features/home/domain/repositories/home_repository.dart';
-import 'package:scan_sa_user/features/home/domain/repositories/home_repository_interface.dart';
-import 'package:scan_sa_user/features/home/domain/services/advertisement_service.dart';
-import 'package:scan_sa_user/features/home/domain/services/advertisement_service_interface.dart';
-import 'package:scan_sa_user/features/home/domain/services/home_service.dart';
-import 'package:scan_sa_user/features/home/domain/services/home_service_interface.dart';
-import 'package:scan_sa_user/features/cart/controllers/cart_controller.dart';
-import 'package:scan_sa_user/features/banner/controllers/banner_controller.dart';
-import 'package:scan_sa_user/features/banner/domain/repositories/banner_repository.dart';
-import 'package:scan_sa_user/features/banner/domain/repositories/banner_repository_interface.dart';
-import 'package:scan_sa_user/features/banner/domain/services/banner_service.dart';
-import 'package:scan_sa_user/features/banner/domain/services/banner_service_interface.dart';
-import 'package:scan_sa_user/features/cart/domain/repositories/cart_repository.dart';
-import 'package:scan_sa_user/features/cart/domain/repositories/cart_repository_interface.dart';
-import 'package:scan_sa_user/features/cart/domain/services/cart_service.dart';
-import 'package:scan_sa_user/features/cart/domain/services/cart_service_interface.dart';
-import 'package:scan_sa_user/features/category/controllers/category_controller.dart';
-import 'package:scan_sa_user/features/category/domain/reposotories/category_repository.dart';
-import 'package:scan_sa_user/features/category/domain/reposotories/category_repository_interface.dart';
-import 'package:scan_sa_user/features/category/domain/services/category_service.dart';
-import 'package:scan_sa_user/features/category/domain/services/category_service_interface.dart';
-import 'package:scan_sa_user/features/chat/controllers/chat_controller.dart';
-import 'package:scan_sa_user/features/chat/domain/repositories/chat_repository.dart';
-import 'package:scan_sa_user/features/chat/domain/repositories/chat_repository_interface.dart';
-import 'package:scan_sa_user/features/chat/domain/services/chat_service.dart';
-import 'package:scan_sa_user/features/chat/domain/services/chat_service_interface.dart';
-import 'package:scan_sa_user/features/coupon/controllers/coupon_controller.dart';
-import 'package:scan_sa_user/features/coupon/domain/services/coupon_service.dart';
-import 'package:scan_sa_user/features/coupon/domain/services/coupon_service_interface.dart';
-import 'package:scan_sa_user/features/favourite/controllers/favourite_controller.dart';
-import 'package:scan_sa_user/features/favourite/domain/repositories/favourite_repository.dart';
-import 'package:scan_sa_user/features/favourite/domain/repositories/favourite_repository_interface.dart';
-import 'package:scan_sa_user/features/favourite/domain/services/favourite_service.dart';
-import 'package:scan_sa_user/features/favourite/domain/services/favourite_service_interface.dart';
-import 'package:scan_sa_user/features/html/controllers/html_controller.dart';
-import 'package:scan_sa_user/features/html/domain/repositories/html_repository.dart';
-import 'package:scan_sa_user/features/html/domain/repositories/html_repository_interface.dart';
-import 'package:scan_sa_user/features/html/domain/services/html_service.dart';
-import 'package:scan_sa_user/features/html/domain/services/html_service_interface.dart';
-import 'package:scan_sa_user/features/item/controllers/campaign_controller.dart';
-import 'package:scan_sa_user/features/item/controllers/item_controller.dart';
-import 'package:scan_sa_user/features/item/domain/repositories/campaign_repository.dart';
-import 'package:scan_sa_user/features/item/domain/repositories/campaign_repository_interface.dart';
-import 'package:scan_sa_user/features/item/domain/repositories/item_repository.dart';
-import 'package:scan_sa_user/features/item/domain/repositories/item_repository_interface.dart';
-import 'package:scan_sa_user/features/item/domain/services/campaign_service.dart';
-import 'package:scan_sa_user/features/item/domain/services/campaign_service_interface.dart';
-import 'package:scan_sa_user/features/item/domain/services/item_service.dart';
-import 'package:scan_sa_user/features/item/domain/services/item_service_interface.dart';
-import 'package:scan_sa_user/features/language/controllers/language_controller.dart';
-import 'package:scan_sa_user/features/language/domain/repository/language_repository.dart';
-import 'package:scan_sa_user/features/language/domain/repository/language_repository_interface.dart';
-import 'package:scan_sa_user/features/language/domain/service/language_service.dart';
-import 'package:scan_sa_user/features/language/domain/service/language_service_interface.dart';
-import 'package:scan_sa_user/features/location/controllers/location_controller.dart';
-import 'package:scan_sa_user/common/controllers/theme_controller.dart';
-import 'package:scan_sa_user/api/api_client.dart';
-import 'package:scan_sa_user/features/address/controllers/address_controller.dart';
-import 'package:scan_sa_user/features/address/domain/repositories/address_repository.dart';
-import 'package:scan_sa_user/features/address/domain/repositories/address_repository_interface.dart';
-import 'package:scan_sa_user/features/address/domain/services/address_service.dart';
-import 'package:scan_sa_user/features/address/domain/services/address_service_interface.dart';
-import 'package:scan_sa_user/features/auth/controllers/auth_controller.dart';
-import 'package:scan_sa_user/features/auth/controllers/deliveryman_registration_controller.dart';
-import 'package:scan_sa_user/features/auth/controllers/store_registration_controller.dart';
-import 'package:scan_sa_user/features/auth/domain/reposotories/auth_repository.dart';
-import 'package:scan_sa_user/features/auth/domain/reposotories/auth_repository_interface.dart';
-import 'package:scan_sa_user/features/auth/domain/reposotories/deliveryman_registration_repository.dart';
-import 'package:scan_sa_user/features/auth/domain/reposotories/deliveryman_registration_repository_interface.dart';
-import 'package:scan_sa_user/features/auth/domain/reposotories/store_registration_repository.dart';
-import 'package:scan_sa_user/features/auth/domain/reposotories/store_registration_repository_interface.dart';
-import 'package:scan_sa_user/features/auth/domain/services/auth_service.dart';
-import 'package:scan_sa_user/features/auth/domain/services/auth_service_interface.dart';
-import 'package:scan_sa_user/features/auth/domain/services/deliveryman_registration_service.dart';
-import 'package:scan_sa_user/features/auth/domain/services/deliveryman_registration_service_interface.dart';
-import 'package:scan_sa_user/features/auth/domain/services/store_registration_service.dart';
-import 'package:scan_sa_user/features/auth/domain/services/store_registration_service_interface.dart';
-import 'package:scan_sa_user/features/checkout/controllers/checkout_controller.dart';
-import 'package:scan_sa_user/features/checkout/domain/repositories/checkout_repository.dart';
-import 'package:scan_sa_user/features/checkout/domain/repositories/checkout_repository_interface.dart';
-import 'package:scan_sa_user/features/checkout/domain/services/checkout_service.dart';
-import 'package:scan_sa_user/features/checkout/domain/services/checkout_service_interface.dart';
-import 'package:scan_sa_user/features/location/domain/repositories/location_repository.dart';
-import 'package:scan_sa_user/features/location/domain/repositories/location_repository_interface.dart';
-import 'package:scan_sa_user/features/location/domain/services/location_service.dart';
-import 'package:scan_sa_user/features/location/domain/services/location_service_interface.dart';
-import 'package:scan_sa_user/features/loyalty/controllers/loyalty_controller.dart';
-import 'package:scan_sa_user/features/loyalty/domain/repositories/loyalty_repository.dart';
-import 'package:scan_sa_user/features/loyalty/domain/repositories/loyalty_repository_interface.dart';
-import 'package:scan_sa_user/features/loyalty/domain/services/loyalty_service.dart';
-import 'package:scan_sa_user/features/loyalty/domain/services/loyalty_service_interface.dart';
-import 'package:scan_sa_user/features/notification/controllers/notification_controller.dart';
-import 'package:scan_sa_user/features/notification/domain/repository/notification_repository.dart';
-import 'package:scan_sa_user/features/notification/domain/repository/notification_repository_interface.dart';
-import 'package:scan_sa_user/features/notification/domain/service/notification_service.dart';
-import 'package:scan_sa_user/features/notification/domain/service/notification_service_interface.dart';
-import 'package:scan_sa_user/features/onboard/controllers/onboard_controller.dart';
-import 'package:scan_sa_user/features/onboard/domain/repository/onboard_repository.dart';
-import 'package:scan_sa_user/features/onboard/domain/repository/onboard_repository_interface.dart';
-import 'package:scan_sa_user/features/onboard/domain/service/onboard_service.dart';
-import 'package:scan_sa_user/features/onboard/domain/service/onboard_service_interface.dart';
-import 'package:scan_sa_user/features/order/controllers/order_controller.dart';
-import 'package:scan_sa_user/features/order/domain/repositories/order_repository.dart';
-import 'package:scan_sa_user/features/order/domain/repositories/order_repository_interface.dart';
-import 'package:scan_sa_user/features/order/domain/services/order_service.dart';
-import 'package:scan_sa_user/features/order/domain/services/order_service_interface.dart';
-import 'package:scan_sa_user/features/payment/controllers/payment_controller.dart';
-import 'package:scan_sa_user/features/payment/domain/repositories/payement_repository.dart';
-import 'package:scan_sa_user/features/payment/domain/repositories/payment_repository_interface.dart';
-import 'package:scan_sa_user/features/payment/domain/services/payment_service.dart';
-import 'package:scan_sa_user/features/payment/domain/services/payment_service_interface.dart';
-import 'package:scan_sa_user/features/profile/controllers/profile_controller.dart';
-import 'package:scan_sa_user/features/profile/domain/repositories/profile_repository.dart';
-import 'package:scan_sa_user/features/profile/domain/repositories/profile_repository_interface.dart';
-import 'package:scan_sa_user/features/profile/domain/services/profile_service.dart';
-import 'package:scan_sa_user/features/profile/domain/services/profile_service_interface.dart';
-import 'package:scan_sa_user/features/review/controllers/review_controller.dart';
-import 'package:scan_sa_user/features/review/domain/repositories/review_repository.dart';
-import 'package:scan_sa_user/features/review/domain/repositories/review_repository_interface.dart';
-import 'package:scan_sa_user/features/review/domain/services/review_service.dart';
-import 'package:scan_sa_user/features/review/domain/services/review_service_interface.dart';
-import 'package:scan_sa_user/features/search/controllers/search_controller.dart';
-import 'package:scan_sa_user/features/search/domain/repositories/search_repository.dart';
-import 'package:scan_sa_user/features/search/domain/repositories/search_repository_interface.dart';
-import 'package:scan_sa_user/features/search/domain/services/search_service.dart';
-import 'package:scan_sa_user/features/search/domain/services/search_service_interface.dart';
-import 'package:scan_sa_user/features/splash/controllers/splash_controller.dart';
-import 'package:scan_sa_user/features/splash/domain/repositories/splash_repository.dart';
-import 'package:scan_sa_user/features/splash/domain/repositories/splash_repository_interface.dart';
-import 'package:scan_sa_user/features/splash/domain/services/splash_service.dart';
-import 'package:scan_sa_user/features/splash/domain/services/splash_service_interface.dart';
-import 'package:scan_sa_user/features/store/controllers/store_controller.dart';
-import 'package:scan_sa_user/features/store/domain/repositories/store_repository.dart';
-import 'package:scan_sa_user/features/store/domain/repositories/store_repository_interface.dart';
-import 'package:scan_sa_user/features/store/domain/services/store_service.dart';
-import 'package:scan_sa_user/features/store/domain/services/store_service_interface.dart';
-import 'package:scan_sa_user/features/verification/controllers/verification_controller.dart';
-import 'package:scan_sa_user/features/verification/domein/reposotories/verification_repository.dart';
-import 'package:scan_sa_user/features/verification/domein/reposotories/verification_repository_interface.dart';
-import 'package:scan_sa_user/features/verification/domein/services/verification_service.dart';
-import 'package:scan_sa_user/features/verification/domein/services/verification_service_interface.dart';
-import 'package:scan_sa_user/features/wallet/controllers/wallet_controller.dart';
-import 'package:scan_sa_user/features/wallet/domain/repositories/wallet_repository.dart';
-import 'package:scan_sa_user/features/wallet/domain/repositories/wallet_repository_interface.dart';
-import 'package:scan_sa_user/features/wallet/domain/services/wallet_service.dart';
-import 'package:scan_sa_user/features/wallet/domain/services/wallet_service_interface.dart';
-import 'package:scan_sa_user/util/app_constants.dart';
-import 'package:scan_sa_user/features/language/domain/models/language_model.dart';
-import 'package:flutter/services.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:get/get.dart';
+import 'package:scan_sa_user/api/api_client.dart';
+import 'package:scan_sa_user/app/presentation/auth_module/auth_repo/auth_repository.dart';
+import 'package:scan_sa_user/app/presentation/auth_module/auth_repo/auth_repository_interface.dart';
+import 'package:scan_sa_user/app/presentation/auth_module/auth_service/auth_service.dart';
+import 'package:scan_sa_user/app/presentation/auth_module/auth_service/auth_service_interface.dart';
+import 'package:scan_sa_user/app/presentation/bottom_bar_module/screens/cart_module/controller/cart_controller.dart';
+import 'package:scan_sa_user/app/presentation/bottom_bar_module/screens/cart_module/controller/item_controller.dart';
+import 'package:scan_sa_user/app/presentation/bottom_bar_module/screens/cart_module/domain/repositories/cart_repository.dart';
+import 'package:scan_sa_user/app/presentation/bottom_bar_module/screens/cart_module/domain/repositories/cart_repository_interface.dart';
+import 'package:scan_sa_user/app/presentation/bottom_bar_module/screens/cart_module/domain/repositories/item_repository.dart';
+import 'package:scan_sa_user/app/presentation/bottom_bar_module/screens/cart_module/domain/repositories/item_repository_interface.dart';
+import 'package:scan_sa_user/app/presentation/bottom_bar_module/screens/cart_module/domain/services/cart_service.dart';
+import 'package:scan_sa_user/app/presentation/bottom_bar_module/screens/cart_module/domain/services/cart_service_interface.dart';
+import 'package:scan_sa_user/app/presentation/bottom_bar_module/screens/cart_module/domain/services/item_service.dart';
+import 'package:scan_sa_user/app/presentation/bottom_bar_module/screens/cart_module/domain/services/item_service_interface.dart';
+import 'package:scan_sa_user/app/presentation/bottom_bar_module/screens/cart_module/screens/checkout_module/domain/repositories/checkout_repository.dart';
+import 'package:scan_sa_user/app/presentation/bottom_bar_module/screens/cart_module/screens/checkout_module/domain/repositories/checkout_repository_interface.dart';
+import 'package:scan_sa_user/app/presentation/bottom_bar_module/screens/cart_module/screens/checkout_module/domain/services/checkout_service.dart';
+import 'package:scan_sa_user/app/presentation/bottom_bar_module/screens/cart_module/screens/checkout_module/domain/services/checkout_service_interface.dart';
+import 'package:scan_sa_user/app/presentation/bottom_bar_module/screens/favorite_module/controllers/favorite_controller.dart';
+import 'package:scan_sa_user/app/presentation/bottom_bar_module/screens/favorite_module/domain/repositories/favorite_repository.dart';
+import 'package:scan_sa_user/app/presentation/bottom_bar_module/screens/favorite_module/domain/repositories/favorite_repository_interface.dart';
+import 'package:scan_sa_user/app/presentation/bottom_bar_module/screens/favorite_module/domain/services/favorite_service.dart';
+import 'package:scan_sa_user/app/presentation/bottom_bar_module/screens/favorite_module/domain/services/favorite_service_interface.dart';
+import 'package:scan_sa_user/app/presentation/bottom_bar_module/screens/home_module/domains/banner_domain/repositories/banner_repository.dart';
+import 'package:scan_sa_user/app/presentation/bottom_bar_module/screens/home_module/domains/banner_domain/repositories/banner_repository_interface.dart';
+import 'package:scan_sa_user/app/presentation/bottom_bar_module/screens/home_module/domains/banner_domain/services/banner_service.dart';
+import 'package:scan_sa_user/app/presentation/bottom_bar_module/screens/home_module/domains/banner_domain/services/banner_service_interface.dart';
+import 'package:scan_sa_user/app/presentation/bottom_bar_module/screens/home_module/domains/category_domain/repositories/category_repository.dart';
+import 'package:scan_sa_user/app/presentation/bottom_bar_module/screens/home_module/domains/category_domain/repositories/category_repository_interface.dart';
+import 'package:scan_sa_user/app/presentation/bottom_bar_module/screens/home_module/domains/category_domain/services/category_service.dart';
+import 'package:scan_sa_user/app/presentation/bottom_bar_module/screens/home_module/domains/category_domain/services/category_service_interface.dart';
+import 'package:scan_sa_user/app/presentation/bottom_bar_module/screens/home_module/domains/store_domain/repositories/store_repository.dart';
+import 'package:scan_sa_user/app/presentation/bottom_bar_module/screens/home_module/domains/store_domain/repositories/store_repository_interface.dart';
+import 'package:scan_sa_user/app/presentation/bottom_bar_module/screens/home_module/domains/store_domain/services/store_service.dart';
+import 'package:scan_sa_user/app/presentation/bottom_bar_module/screens/home_module/domains/store_domain/services/store_service_interface.dart';
+import 'package:scan_sa_user/app/presentation/bottom_bar_module/screens/profile_module/domain/repositories/profile_repository.dart';
+import 'package:scan_sa_user/app/presentation/bottom_bar_module/screens/profile_module/domain/repositories/profile_repository_interface.dart';
+import 'package:scan_sa_user/app/presentation/bottom_bar_module/screens/profile_module/domain/services/profile_service.dart';
+import 'package:scan_sa_user/app/presentation/bottom_bar_module/screens/profile_module/domain/services/profile_service_interface.dart';
+import 'package:scan_sa_user/app/presentation/bottom_bar_module/screens/profile_module/screens/coupon_screen/domain/repositories/coupon_repository.dart';
+import 'package:scan_sa_user/app/presentation/bottom_bar_module/screens/profile_module/screens/coupon_screen/domain/repositories/coupon_repository_interface.dart';
+import 'package:scan_sa_user/app/presentation/bottom_bar_module/screens/profile_module/screens/coupon_screen/domain/services/coupon_service.dart';
+import 'package:scan_sa_user/app/presentation/bottom_bar_module/screens/profile_module/screens/coupon_screen/domain/services/coupon_service_interface.dart';
+import 'package:scan_sa_user/app/presentation/bottom_bar_module/screens/profile_module/screens/html/domain/repositories/html_repository.dart';
+import 'package:scan_sa_user/app/presentation/bottom_bar_module/screens/profile_module/screens/html/domain/repositories/html_repository_interface.dart';
+import 'package:scan_sa_user/app/presentation/bottom_bar_module/screens/profile_module/screens/html/domain/services/html_service.dart';
+import 'package:scan_sa_user/app/presentation/bottom_bar_module/screens/profile_module/screens/html/domain/services/html_service_interface.dart';
+import 'package:scan_sa_user/app/presentation/bottom_bar_module/screens/profile_module/screens/join_as_delivery_store_module/domain/repositories/deliveryman_registration_repository.dart';
+import 'package:scan_sa_user/app/presentation/bottom_bar_module/screens/profile_module/screens/join_as_delivery_store_module/domain/repositories/deliveryman_registration_repository_interface.dart';
+import 'package:scan_sa_user/app/presentation/bottom_bar_module/screens/profile_module/screens/join_as_delivery_store_module/domain/services/deliveryman_registration_service.dart';
+import 'package:scan_sa_user/app/presentation/bottom_bar_module/screens/profile_module/screens/join_as_delivery_store_module/domain/services/deliveryman_registration_service_interface.dart';
+import 'package:scan_sa_user/app/presentation/bottom_bar_module/screens/profile_module/screens/join_as_vendor/business/domain/repositories/business_repo.dart';
+import 'package:scan_sa_user/app/presentation/bottom_bar_module/screens/profile_module/screens/join_as_vendor/business/domain/repositories/business_repo_interface.dart';
+import 'package:scan_sa_user/app/presentation/bottom_bar_module/screens/profile_module/screens/join_as_vendor/business/domain/services/business_service.dart';
+import 'package:scan_sa_user/app/presentation/bottom_bar_module/screens/profile_module/screens/join_as_vendor/business/domain/services/business_service_interface.dart';
+import 'package:scan_sa_user/app/presentation/bottom_bar_module/screens/profile_module/screens/join_as_vendor/domain/repositories/store_registration_repository.dart';
+import 'package:scan_sa_user/app/presentation/bottom_bar_module/screens/profile_module/screens/join_as_vendor/domain/repositories/store_registration_repository_interface.dart';
+import 'package:scan_sa_user/app/presentation/bottom_bar_module/screens/profile_module/screens/join_as_vendor/domain/services/store_registration_service.dart';
+import 'package:scan_sa_user/app/presentation/bottom_bar_module/screens/profile_module/screens/join_as_vendor/domain/services/store_registration_service_interface.dart';
+import 'package:scan_sa_user/app/presentation/bottom_bar_module/screens/profile_module/screens/loyalty/domain/repositories/loyalty_repository.dart';
+import 'package:scan_sa_user/app/presentation/bottom_bar_module/screens/profile_module/screens/loyalty/domain/repositories/loyalty_repository_interface.dart';
+import 'package:scan_sa_user/app/presentation/bottom_bar_module/screens/profile_module/screens/loyalty/domain/services/loyalty_service.dart';
+import 'package:scan_sa_user/app/presentation/bottom_bar_module/screens/profile_module/screens/loyalty/domain/services/loyalty_service_interface.dart';
+import 'package:scan_sa_user/app/presentation/bottom_bar_module/screens/profile_module/screens/wallet_module/domain/repositories/wallet_repository.dart';
+import 'package:scan_sa_user/app/presentation/bottom_bar_module/screens/profile_module/screens/wallet_module/domain/repositories/wallet_repository_interface.dart';
+import 'package:scan_sa_user/app/presentation/bottom_bar_module/screens/profile_module/screens/wallet_module/domain/services/wallet_service.dart';
+import 'package:scan_sa_user/app/presentation/bottom_bar_module/screens/profile_module/screens/wallet_module/domain/services/wallet_service_interface.dart';
+import 'package:scan_sa_user/app/presentation/bottom_bar_module/screens/search_module/domain/repositories/search_repository.dart';
+import 'package:scan_sa_user/app/presentation/bottom_bar_module/screens/search_module/domain/repositories/search_repository_interface.dart';
+import 'package:scan_sa_user/app/presentation/bottom_bar_module/screens/search_module/domain/services/search_service.dart';
+import 'package:scan_sa_user/app/presentation/bottom_bar_module/screens/search_module/domain/services/search_service_interface.dart';
+import 'package:scan_sa_user/app/presentation/location_module/repositories/location_repository.dart';
+import 'package:scan_sa_user/app/presentation/location_module/repositories/location_repository_interface.dart';
+import 'package:scan_sa_user/app/presentation/location_module/services/location_service.dart';
+import 'package:scan_sa_user/app/presentation/location_module/services/location_service_interface.dart';
+import 'package:scan_sa_user/app/presentation/main_screens/repositories/global_repository.dart';
+import 'package:scan_sa_user/app/presentation/main_screens/repositories/global_repository_interface.dart';
+import 'package:scan_sa_user/app/presentation/main_screens/services/global_service.dart';
+import 'package:scan_sa_user/app/presentation/main_screens/services/global_service_interface.dart';
+import 'package:scan_sa_user/common/models/address_model.dart';
+import 'package:scan_sa_user/utils/app_constants.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
-Future<Map<String, Map<String, String>>> init() async {
-  /// Core
+Future<void> getDiInit() async {
   final sharedPreferences = await SharedPreferences.getInstance();
-  Get.lazyPut(() => sharedPreferences);
-  Get.lazyPut(
-    () => ApiClient(
-      appBaseUrl: AppConstants.baseUrl,
-      sharedPreferences: Get.find(),
-    ),
+  Get.put(sharedPreferences);
+  Get.put(
+    ApiClient(appBaseUrl: AppConstants.baseUrl, sharedPreferences: Get.find()),
   );
 
-  /// Repository interface
-  CheckoutRepositoryInterface checkoutRepositoryInterface =
-      CheckoutRepository(apiClient: Get.find(), sharedPreferences: Get.find());
-  Get.lazyPut(() => checkoutRepositoryInterface);
+  await _registerRepo();
+  await registerService();
+}
 
-  AuthRepositoryInterface authRepositoryInterface =
-      AuthRepository(apiClient: Get.find(), sharedPreferences: Get.find());
-  Get.lazyPut(() => authRepositoryInterface);
+Future<void> _registerRepo() async {
+  /// global repo
+  final GlobalRepositoryInterface globalRepositoryInterface = GlobalRepository(
+    apiClient: Get.find(),
+    sharedPreferences: Get.find(),
+  );
+  Get.put(globalRepositoryInterface);
 
-  LocationRepositoryInterface locationRepositoryInterface =
+  /// auth repo
+  final AuthRepositoryInterface authRepositoryInterface = AuthRepository(
+    apiClient: Get.find(),
+    sharedPreferences: Get.find(),
+  );
+  Get.put(authRepositoryInterface);
+
+  /// location repo
+  final LocationRepositoryInterface<AddressModel> locationRepositoryInterface =
       LocationRepository(apiClient: Get.find());
-  Get.lazyPut(() => locationRepositoryInterface);
+  Get.put(locationRepositoryInterface);
 
-  DeliverymanRegistrationRepositoryInterface
-      deliverymanRegistrationRepositoryInterface =
-      DeliverymanRegistrationRepository(
-    apiClient: Get.find(),
-    sharedPreferences: Get.find(),
-  );
-  Get.lazyPut(() => deliverymanRegistrationRepositoryInterface);
-
-  StoreRegistrationRepositoryInterface storeRegistrationRepositoryInterface =
-      StoreRegistrationRepository(apiClient: Get.find());
-  Get.lazyPut(() => storeRegistrationRepositoryInterface);
-
-  AddressRepositoryInterface addressRepositoryInterface =
-      AddressRepository(apiClient: Get.find());
-  Get.lazyPut(() => addressRepositoryInterface);
-
-  OrderRepositoryInterface orderRepositoryInterface =
-      OrderRepository(apiClient: Get.find());
-  Get.lazyPut(() => orderRepositoryInterface);
-
-  PaymentRepositoryInterface paymentRepositoryInterface =
-      PaymentRepository(apiClient: Get.find(), sharedPreferences: Get.find());
-  Get.lazyPut(() => paymentRepositoryInterface);
-
-  CampaignRepositoryInterface campaignRepositoryInterface =
-      CampaignRepository(apiClient: Get.find());
-  Get.lazyPut(() => campaignRepositoryInterface);
-
-  ChatRepositoryInterface chatRepositoryInterface =
-      ChatRepository(apiClient: Get.find(), sharedPreferences: Get.find());
-  Get.lazyPut(() => chatRepositoryInterface);
-
-  CouponRepositoryInterface couponRepositoryInterface =
-      CouponRepository(apiClient: Get.find());
-  Get.lazyPut(() => couponRepositoryInterface);
-
-  FavouriteRepositoryInterface favouriteRepositoryInterface =
-      FavouriteRepository(apiClient: Get.find());
-  Get.lazyPut(() => favouriteRepositoryInterface);
-
-  HomeRepositoryInterface homeRepositoryInterface =
-      HomeRepository(apiClient: Get.find(), sharedPreferences: Get.find());
-  Get.lazyPut(() => homeRepositoryInterface);
-
-  BannerRepositoryInterface bannerRepositoryInterface =
-      BannerRepository(apiClient: Get.find());
-  Get.lazyPut(() => bannerRepositoryInterface);
-
-  HtmlRepositoryInterface htmlRepositoryInterface =
-      HtmlRepository(apiClient: Get.find());
-  Get.lazyPut(() => htmlRepositoryInterface);
-
-  LanguageRepositoryInterface languageRepositoryInterface =
-      LanguageRepository(apiClient: Get.find(), sharedPreferences: Get.find());
-  Get.lazyPut(() => languageRepositoryInterface);
-
-  NotificationRepositoryInterface notificationRepositoryInterface =
-      NotificationRepository(
-    sharedPreferences: Get.find(),
+  /// banner repo
+  final BannerRepositoryInterface bannerRepositoryInterface = BannerRepository(
     apiClient: Get.find(),
   );
-  Get.lazyPut(() => notificationRepositoryInterface);
+  Get.put(bannerRepositoryInterface);
 
-  OnboardRepositoryInterface onboardRepositoryInterface = OnboardRepository();
-  Get.lazyPut(() => onboardRepositoryInterface);
-
-  ProfileRepositoryInterface profileRepositoryInterface =
-      ProfileRepository(apiClient: Get.find());
-  Get.lazyPut(() => profileRepositoryInterface);
-
-  SearchRepositoryInterface searchRepositoryInterface =
-      SearchRepository(apiClient: Get.find(), sharedPreferences: Get.find());
-  Get.lazyPut(() => searchRepositoryInterface);
-
-  SplashRepositoryInterface splashRepositoryInterface =
-      SplashRepository(sharedPreferences: Get.find(), apiClient: Get.find());
-  Get.lazyPut(() => splashRepositoryInterface);
-
-  ReviewRepositoryInterface reviewRepositoryInterface =
-      ReviewRepository(apiClient: Get.find());
-  Get.lazyPut(() => reviewRepositoryInterface);
-
-  StoreRepositoryInterface storeRepositoryInterface =
-      StoreRepository(apiClient: Get.find(), sharedPreferences: Get.find());
-  Get.lazyPut(() => storeRepositoryInterface);
-
-  WalletRepositoryInterface walletRepositoryInterface =
-      WalletRepository(sharedPreferences: Get.find(), apiClient: Get.find());
-  Get.lazyPut(() => walletRepositoryInterface);
-
-  ItemRepositoryInterface itemRepositoryInterface =
-      ItemRepository(apiClient: Get.find());
-  Get.lazyPut(() => itemRepositoryInterface);
-
-  CategoryRepositoryInterface categoryRepositoryInterface =
+  /// category repo
+  final CategoryRepositoryInterface categoryRepositoryInterface =
       CategoryRepository(apiClient: Get.find());
-  Get.lazyPut(() => categoryRepositoryInterface);
+  Get.put(categoryRepositoryInterface);
 
-  LoyaltyRepositoryInterface loyaltyRepositoryInterface =
-      LoyaltyRepository(apiClient: Get.find());
-  Get.lazyPut(() => loyaltyRepositoryInterface);
-
-  CartRepositoryInterface cartRepositoryInterface =
-      CartRepository(apiClient: Get.find(), sharedPreferences: Get.find());
-  Get.lazyPut(() => cartRepositoryInterface);
-
-  VerificationRepositoryInterface verificationRepositoryInterface =
-      VerificationRepository(
+  /// search repo
+  final SearchRepositoryInterface searchRepositoryInterface = SearchRepository(
     apiClient: Get.find(),
     sharedPreferences: Get.find(),
   );
-  Get.lazyPut(() => verificationRepositoryInterface);
+  Get.put(searchRepositoryInterface);
 
-  BrandsRepositoryInterface brandsRepositoryInterface =
-      BrandsRepository(apiClient: Get.find());
-  Get.lazyPut(() => brandsRepositoryInterface);
+  /// html repo
+  final HtmlRepositoryInterface htmlRepositoryInterface = HtmlRepository(
+    apiClient: Get.find(),
+  );
+  Get.put(htmlRepositoryInterface);
 
-  BusinessRepoInterface businessRepoInterface =
-      BusinessRepo(apiClient: Get.find());
-  Get.lazyPut(() => businessRepoInterface);
+  /// store repo
+  final StoreRepositoryInterface storeRepositoryInterface = StoreRepository(
+    apiClient: Get.find(),
+    sharedPreferences: Get.find(),
+  );
+  Get.put(storeRepositoryInterface);
 
-  AdvertisementRepositoryInterface advertisementRepositoryInterface =
-      AdvertisementRepository(apiClient: Get.find());
-  Get.lazyPut(() => advertisementRepositoryInterface);
+  /// Favorite repo
+  final FavoriteRepositoryInterface<dynamic> favoriteRepositoryInterface =
+      FavoriteRepository(apiClient: Get.find());
+  Get.put(favoriteRepositoryInterface);
 
-  /// Service Interface
-  CheckoutServiceInterface checkoutServiceInterface =
-      CheckoutService(checkoutRepositoryInterface: Get.find());
-  Get.lazyPut(() => checkoutServiceInterface);
+  /// Cart repo
+  final CartRepositoryInterface<dynamic> cartRepositoryInterface =
+      CartRepository(apiClient: Get.find(), sharedPreferences: Get.find());
+  Get.put(cartRepositoryInterface);
 
-  AuthServiceInterface authServiceInterface =
-      AuthService(authRepositoryInterface: Get.find());
-  Get.lazyPut(() => authServiceInterface);
+  /// Item repo
+  final ItemRepositoryInterface itemRepositoryInterface = ItemRepository(
+    apiClient: Get.find(),
+  );
+  Get.put(itemRepositoryInterface);
 
-  LocationServiceInterface locationServiceInterface =
-      LocationService(locationRepoInterface: Get.find());
+  /// Profile repo
+  final ProfileRepositoryInterface profileRepositoryInterface =
+      ProfileRepository(apiClient: Get.find());
+  Get.put(profileRepositoryInterface);
 
-  DeliverymanRegistrationServiceInterface
-      deliverymanRegistrationServiceInterface = DeliverymanRegistrationService(
+  /// Coupon repo
+  final CouponRepositoryInterface couponRepositoryInterface = CouponRepository(
+    apiClient: Get.find(),
+  );
+  Get.put(couponRepositoryInterface);
+
+  /// Loyalty repo
+  final LoyaltyRepositoryInterface loyaltyRepositoryInterface =
+      LoyaltyRepository(apiClient: Get.find());
+  Get.put(loyaltyRepositoryInterface);
+
+  /// Wallet repo
+  final WalletRepositoryInterface walletRepositoryInterface = WalletRepository(
+    apiClient: Get.find(),
+    sharedPreferences: Get.find(),
+  );
+  Get.put(walletRepositoryInterface);
+
+  /// Checkout repo
+  final CheckoutRepositoryInterface checkoutRepositoryInterface =
+      CheckoutRepository(apiClient: Get.find(), sharedPreferences: Get.find());
+  Get.put(checkoutRepositoryInterface);
+
+  /// Join as delivery repo
+  final DeliverymanRegistrationRepositoryInterface
+  deliverymanRegistrationRepositoryInterface =
+      DeliverymanRegistrationRepository(
+        apiClient: Get.find(),
+        sharedPreferences: Get.find(),
+      );
+  Get.put(deliverymanRegistrationRepositoryInterface);
+
+  /// Join as store repo
+  final StoreRegistrationRepositoryInterface storeRegistrationServiceInterface =
+      StoreRegistrationRepository(apiClient: Get.find());
+  Get.put(storeRegistrationServiceInterface);
+
+  /// business interface repo
+  final BusinessRepoInterface businessRepoInterface = BusinessRepo(
+    apiClient: Get.find(),
+  );
+  Get.put(businessRepoInterface);
+}
+
+Future<void> registerService() async {
+  /// global service
+  final GlobalServiceInterface globalServiceInterface = GlobalService(
+    globalRepositoryInterface: Get.find(),
+  );
+  Get.put(globalServiceInterface);
+
+  /// auth service
+  final AuthServiceInterface authServiceInterface = AuthService(
+    authRepositoryInterface: Get.find(),
+  );
+  Get.put(authServiceInterface);
+
+  /// location service
+  final LocationServiceInterface locationServiceInterface = LocationService(
+    locationRepoInterface: Get.find(),
+  );
+  Get.put(locationServiceInterface);
+
+  /// banner service interface service
+  final BannerServiceInterface bannerServiceInterface = BannerService(
+    bannerRepositoryInterface: Get.find(),
+  );
+  Get.put(bannerServiceInterface);
+
+  /// category interface service
+  final CategoryServiceInterface categoryServiceInterface = CategoryService(
+    categoryRepositoryInterface: Get.find(),
+  );
+  Get.put(categoryServiceInterface);
+
+  /// Search interface service
+  final SearchServiceInterface searchServiceInterface = SearchService(
+    searchRepositoryInterface: Get.find(),
+  );
+  Get.put(searchServiceInterface);
+
+  /// Html service interface service
+  final HtmlServiceInterface htmlServiceInterface = HtmlService(
+    htmlRepositoryInterface: Get.find(),
+  );
+  Get.put(htmlServiceInterface);
+
+  /// store interface service
+  final StoreServiceInterface storeInterface = StoreService(
+    storeRepositoryInterface: Get.find(),
+  );
+  Get.put(storeInterface);
+
+  /// favorite interface service
+  final FavoriteServiceInterface favoriteInterface = FavoriteService(
+    favoriteRepositoryInterface: Get.find(),
+  );
+  Get.put(favoriteInterface);
+
+  Get.put(FavoriteController(favoriteServiceInterface: favoriteInterface));
+
+  /// cart interface service
+  final CartServiceInterface cartInterface = CartService(
+    cartRepositoryInterface: Get.find(),
+  );
+  Get.put(cartInterface);
+  Get.put(CartController(cartServiceInterface: cartInterface));
+
+  /// cart interface service
+  final ItemServiceInterface itemInterface = ItemService(
+    itemRepositoryInterface: Get.find(),
+  );
+  Get.put(itemInterface);
+  Get.put(ItemController(itemServiceInterface: itemInterface));
+
+  /// profile interface service
+  final ProfileServiceInterface profileInterface = ProfileService(
+    profileRepositoryInterface: Get.find(),
+  );
+  Get.put(profileInterface);
+
+  /// coupon interface service
+  final CouponServiceInterface couponInterface = CouponService(
+    couponRepositoryInterface: Get.find(),
+  );
+  Get.put(couponInterface);
+
+  /// loyalty interface service
+  final LoyaltyServiceInterface loyaltyInterface = LoyaltyService(
+    loyaltyRepositoryInterface: Get.find(),
+  );
+  Get.put(loyaltyInterface);
+
+  /// wallet interface service
+  final WalletServiceInterface walletInterface = WalletService(
+    walletRepositoryInterface: Get.find(),
+  );
+  Get.put(walletInterface);
+
+  /// checkout interface service
+  final CheckoutServiceInterface checkoutInterface = CheckoutService(
+    checkoutRepositoryInterface: Get.find(),
+  );
+  Get.put(checkoutInterface);
+
+  /// delivery interface service
+  final DeliverymanRegistrationServiceInterface
+  deliverymanRegistrationServiceInterface = DeliverymanRegistrationService(
     deliverymanRegistrationRepoInterface: Get.find(),
     authRepositoryInterface: Get.find(),
   );
-  Get.lazyPut(() => deliverymanRegistrationServiceInterface);
+  Get.put(deliverymanRegistrationServiceInterface);
 
-  StoreRegistrationServiceInterface storeRegistrationServiceInterface =
+  /// store interface service
+  final StoreRegistrationServiceInterface storeRepositoryInterface =
       StoreRegistrationService(
-    deliverymanRegistrationRepositoryInterface: Get.find(),
-    storeRegistrationRepoInterface: Get.find(),
+        deliverymanRegistrationRepositoryInterface: Get.find(),
+        storeRegistrationRepoInterface: Get.find(),
+      );
+  Get.put(storeRepositoryInterface);
+
+  /// business interface service
+  final BusinessServiceInterface businessServiceInterface = BusinessService(
+    businessRepoInterface: Get.find(),
   );
-  Get.lazyPut(() => storeRegistrationServiceInterface);
-
-  AddressServiceInterface addressServiceInterface =
-      AddressService(addressRepoInterface: Get.find());
-  Get.lazyPut(() => addressServiceInterface);
-
-  OrderServiceInterface orderServiceInterface =
-      OrderService(orderRepositoryInterface: Get.find());
-  Get.lazyPut(() => orderServiceInterface);
-
-  PaymentServiceInterface paymentServiceInterface =
-      PaymentService(paymentRepositoryInterface: Get.find());
-  Get.lazyPut(() => paymentServiceInterface);
-
-  CampaignServiceInterface campaignServiceInterface =
-      CampaignService(campaignRepositoryInterface: Get.find());
-  Get.lazyPut(() => campaignServiceInterface);
-
-  ChatServiceInterface chatServiceInterface =
-      ChatService(chatRepositoryInterface: Get.find());
-  Get.lazyPut(() => chatServiceInterface);
-
-  CouponServiceInterface couponServiceInterface =
-      CouponService(couponRepositoryInterface: Get.find());
-  Get.lazyPut(() => couponServiceInterface);
-
-  FavouriteServiceInterface favouriteServiceInterface =
-      FavouriteService(favouriteRepositoryInterface: Get.find());
-  Get.lazyPut(() => favouriteServiceInterface);
-
-  HomeServiceInterface homeServiceInterface =
-      HomeService(homeRepositoryInterface: Get.find());
-  Get.lazyPut(() => homeServiceInterface);
-
-  BannerServiceInterface bannerServiceInterface =
-      BannerService(bannerRepositoryInterface: Get.find());
-  Get.lazyPut(() => bannerServiceInterface);
-
-  HtmlServiceInterface htmlServiceInterface =
-      HtmlService(htmlRepositoryInterface: Get.find());
-  Get.lazyPut(() => htmlServiceInterface);
-
-  LanguageServiceInterface languageServiceInterface =
-      LanguageService(languageRepositoryInterface: Get.find());
-  Get.lazyPut(() => languageServiceInterface);
-
-  NotificationServiceInterface notificationServiceInterface =
-      NotificationService(notificationRepositoryInterface: Get.find());
-  Get.lazyPut(() => notificationServiceInterface);
-
-  OnboardServiceInterface onboardServiceInterface =
-      OnboardService(onboardRepositoryInterface: Get.find());
-  Get.lazyPut(() => onboardServiceInterface);
-
-  ProfileServiceInterface profileServiceInterface =
-      ProfileService(profileRepositoryInterface: Get.find());
-  Get.lazyPut(() => profileServiceInterface);
-
-  SearchServiceInterface searchServiceInterface =
-      SearchService(searchRepositoryInterface: Get.find());
-  Get.lazyPut(() => searchServiceInterface);
-
-  SplashServiceInterface splashServiceInterface =
-      SplashService(splashRepositoryInterface: Get.find());
-  Get.lazyPut(() => splashServiceInterface);
-
-  ReviewServiceInterface reviewServiceInterface =
-      ReviewService(reviewRepositoryInterface: Get.find());
-  Get.lazyPut(() => reviewServiceInterface);
-
-  StoreServiceInterface storeServiceInterface =
-      StoreService(storeRepositoryInterface: Get.find());
-  Get.lazyPut(() => storeServiceInterface);
-
-  WalletServiceInterface walletServiceInterface =
-      WalletService(walletRepositoryInterface: Get.find());
-  Get.lazyPut(() => walletServiceInterface);
-
-  ItemServiceInterface itemServiceInterface =
-      ItemService(itemRepositoryInterface: Get.find());
-  Get.lazyPut(() => itemServiceInterface);
-
-  CategoryServiceInterface categoryServiceInterface =
-      CategoryService(categoryRepositoryInterface: Get.find());
-  Get.lazyPut(() => categoryServiceInterface);
-
-  LoyaltyServiceInterface loyaltyServiceInterface =
-      LoyaltyService(loyaltyRepositoryInterface: Get.find());
-  Get.lazyPut(() => loyaltyServiceInterface);
-
-  CartServiceInterface cartServiceInterface =
-      CartService(cartRepositoryInterface: Get.find());
-  Get.lazyPut(() => cartServiceInterface);
-
-  VerificationServiceInterface verificationServiceInterface =
-      VerificationService(
-    verificationRepoInterface: Get.find(),
-    authRepoInterface: Get.find(),
-  );
-  Get.lazyPut(() => verificationServiceInterface);
-
-  BrandsServiceInterface brandsServiceInterface =
-      BrandsService(brandsRepositoryInterface: Get.find());
-  Get.lazyPut(() => brandsServiceInterface);
-
-  BusinessServiceInterface businessServiceInterface =
-      BusinessService(businessRepoInterface: Get.find());
-  Get.lazyPut(() => businessServiceInterface);
-
-  AdvertisementServiceInterface advertisementServiceInterface =
-      AdvertisementService(advertisementRepositoryInterface: Get.find());
-  Get.lazyPut(() => advertisementServiceInterface);
-
-  /// Controller
-  Get.lazyPut(() => ThemeController(sharedPreferences: Get.find()));
-  Get.lazyPut(() => SplashController(splashServiceInterface: Get.find()));
-  Get.lazyPut(() => AddressController(addressServiceInterface: Get.find()));
-  Get.lazyPut(
-    () =>
-        LocationController(locationServiceInterface: locationServiceInterface),
-  );
-  Get.lazyPut(
-    () => LocalizationController(languageServiceInterface: Get.find()),
-  );
-  Get.lazyPut(() => OnBoardingController(onboardServiceInterface: Get.find()));
-  Get.lazyPut(() => AuthController(authServiceInterface: Get.find()));
-  Get.lazyPut(
-    () => DeliverymanRegistrationController(
-      deliverymanRegistrationServiceInterface: Get.find(),
-    ),
-  );
-  Get.lazyPut(
-    () => StoreRegistrationController(
-      storeRegistrationServiceInterface: Get.find(),
-      locationServiceInterface: locationServiceInterface,
-    ),
-  );
-  Get.lazyPut(() => ProfileController(profileServiceInterface: Get.find()));
-  Get.lazyPut(() => BannerController(bannerServiceInterface: Get.find()));
-  Get.lazyPut(() => CategoryController(categoryServiceInterface: Get.find()));
-  Get.lazyPut(() => ItemController(itemServiceInterface: Get.find()));
-  Get.lazyPut(() => CartController(cartServiceInterface: Get.find()));
-  Get.lazyPut(() => StoreController(storeServiceInterface: Get.find()));
-  Get.lazyPut(() => FavouriteController(favouriteServiceInterface: Get.find()));
-  Get.lazyPut(() => HomeController(homeServiceInterface: Get.find()));
-  Get.lazyPut(() => SearchController(searchServiceInterface: Get.find()));
-  Get.lazyPut(() => CouponController(couponServiceInterface: Get.find()));
-  // Get.lazyPut(UploadDocController.new);
-  Get.lazyPut(() => OrderController(orderServiceInterface: Get.find()));
-  Get.lazyPut(
-    () => NotificationController(notificationServiceInterface: Get.find()),
-  );
-  Get.lazyPut(() => CampaignController(campaignServiceInterface: Get.find()));
-  Get.lazyPut(() => WalletController(walletServiceInterface: Get.find()));
-  Get.lazyPut(() => ChatController(chatServiceInterface: Get.find()));
-  Get.lazyPut(() => CheckoutController(checkoutServiceInterface: Get.find()));
-  Get.lazyPut(() => PaymentController(paymentServiceInterface: Get.find()));
-  Get.lazyPut(() => HtmlController(htmlServiceInterface: Get.find()));
-  Get.lazyPut(() => ReviewController(reviewServiceInterface: Get.find()));
-  Get.lazyPut(() => CategoryController(categoryServiceInterface: Get.find()));
-  Get.lazyPut(() => LoyaltyController(loyaltyServiceInterface: Get.find()));
-  Get.lazyPut(
-    () => VerificationController(verificationServiceInterface: Get.find()),
-  );
-  Get.lazyPut(() => BrandsController(brandsServiceInterface: Get.find()));
-  Get.lazyPut(() => BusinessController(businessServiceInterface: Get.find()));
-  Get.lazyPut(
-    () => AdvertisementController(advertisementServiceInterface: Get.find()),
-  );
-
-  /// Retrieving localized data
-  Map<String, Map<String, String>> languages = {};
-  for (LanguageModel languageModel in AppConstants.languages) {
-    String jsonStringValues = await rootBundle
-        .loadString('assets/language/${languageModel.languageCode}.json');
-    Map<String, dynamic> mappedJson = jsonDecode(jsonStringValues);
-    Map<String, String> json = {};
-    mappedJson.forEach((key, value) {
-      json[key] = value.toString();
-    });
-    languages['${languageModel.languageCode}_${languageModel.countryCode}'] =
-        json;
-  }
-  return languages;
+  Get.put(businessServiceInterface);
 }

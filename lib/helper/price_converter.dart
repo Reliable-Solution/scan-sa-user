@@ -1,9 +1,10 @@
+// ignore_for_file: parameter_assignments
+
 import 'package:animated_flip_counter/animated_flip_counter.dart';
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart' as intl;
-import 'package:scan_sa_user/features/splash/controllers/splash_controller.dart';
 import 'package:get/get.dart';
-import 'package:scan_sa_user/util/styles.dart';
+import 'package:intl/intl.dart' as intl;
+import 'package:scan_sa_user/app/presentation/main_screens/controller/global_controller.dart';
 
 class PriceConverter {
   static String convertPrice(
@@ -12,7 +13,7 @@ class PriceConverter {
     String? discountType,
     bool forDM = false,
     bool isFoodVariation = false,
-    String? formatedStringPrice,
+    String? formattedStringPrice,
     bool forTaxi = false,
   }) {
     if (discount != null && discountType != null) {
@@ -22,18 +23,18 @@ class PriceConverter {
         price = price! - ((discount / 100) * price);
       }
     }
-    bool isRightSide =
-        Get.find<SplashController>().configModel!.currencySymbolDirection ==
-            'right';
+    final isRightSide =
+        Get.find<GlobalController>().configModel!.currencySymbolDirection ==
+        'right';
 
     if (forTaxi && price! > 100000) {
-      return '${isRightSide ? '' : '${Get.find<SplashController>().configModel!.currencySymbol!} '}'
+      return '${isRightSide ? '' : '${Get.find<GlobalController>().configModel!.currencySymbol!} '}'
           '${intl.NumberFormat.compact().format(price)}'
-          '${isRightSide ? ' ${Get.find<SplashController>().configModel!.currencySymbol!}' : ''}';
+          '${isRightSide ? ' ${Get.find<GlobalController>().configModel!.currencySymbol!}' : ''}';
     }
-    return '${isRightSide ? '' : '${Get.find<SplashController>().configModel!.currencySymbol!} '}'
-        '${formatedStringPrice ?? toFixed(price!).toStringAsFixed(forDM ? 0 : Get.find<SplashController>().configModel!.digitAfterDecimalPoint!).replaceAllMapped(RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'), (Match m) => '${m[1]},')}'
-        '${isRightSide ? ' ${Get.find<SplashController>().configModel!.currencySymbol!}' : ''}';
+    return '${isRightSide ? '' : '${Get.find<GlobalController>().configModel!.currencySymbol!} '}'
+        '${formattedStringPrice ?? toFixed(price!).toStringAsFixed(forDM ? 0 : Get.find<GlobalController>().configModel!.digitAfterDecimalPoint!).replaceAllMapped(RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'), (Match m) => '${m[1]},')}'
+        '${isRightSide ? ' ${Get.find<GlobalController>().configModel!.currencySymbol!}' : ''}';
   }
 
   static Widget convertAnimationPrice(
@@ -50,23 +51,23 @@ class PriceConverter {
         price = price! - ((discount / 100) * price);
       }
     }
-    bool isRightSide =
-        Get.find<SplashController>().configModel!.currencySymbolDirection ==
-            'right';
+    final isRightSide =
+        Get.find<GlobalController>().configModel!.currencySymbolDirection ==
+        'right';
     return Directionality(
       textDirection: TextDirection.ltr,
       child: AnimatedFlipCounter(
         duration: const Duration(milliseconds: 500),
         value: toFixed(price!),
-        textStyle: textStyle ?? robotoMedium,
+        textStyle: textStyle,
         fractionDigits: forDM
             ? 0
-            : Get.find<SplashController>().configModel!.digitAfterDecimalPoint!,
+            : Get.find<GlobalController>().configModel!.digitAfterDecimalPoint!,
         prefix: isRightSide
             ? ''
-            : '${Get.find<SplashController>().configModel!.currencySymbol!} ',
+            : '${Get.find<GlobalController>().configModel!.currencySymbol!} ',
         suffix: isRightSide
-            ? '${Get.find<SplashController>().configModel!.currencySymbol!} '
+            ? '${Get.find<GlobalController>().configModel!.currencySymbol!} '
             : '',
       ),
     );
@@ -86,12 +87,7 @@ class PriceConverter {
     return price;
   }
 
-  static num calculation(
-    num amount,
-    num? discount,
-    String type,
-    int quantity,
-  ) {
+  static num calculation(num amount, num? discount, String type, int quantity) {
     num calculatedAmount = 0;
     if (type == 'amount' || type == 'fixed') {
       calculatedAmount = discount! * quantity;
@@ -106,26 +102,26 @@ class PriceConverter {
     String discount,
     String discountType,
   ) {
-    return '$discount${discountType == 'percent' ? '%' : Get.find<SplashController>().configModel!.currencySymbol} OFF';
+    return '$discount${discountType == 'percent' ? '%' : Get.find<GlobalController>().configModel!.currencySymbol} OFF';
   }
 
   static num toFixed(num val) {
-    num mod = power(
+    final num mod = power(
       10,
-      Get.find<SplashController>().configModel!.digitAfterDecimalPoint!,
+      Get.find<GlobalController>().configModel!.digitAfterDecimalPoint!,
     );
     return (val * mod)
             .toDouble()
             .toPrecision(
-              Get.find<SplashController>().configModel!.digitAfterDecimalPoint!,
+              Get.find<GlobalController>().configModel!.digitAfterDecimalPoint!,
             )
             .floor() /
         mod;
   }
 
   static int power(int x, int n) {
-    int retval = 1;
-    for (int i = 0; i < n; i++) {
+    var retval = 1;
+    for (var i = 0; i < n; i++) {
       retval *= x;
     }
     return retval;
