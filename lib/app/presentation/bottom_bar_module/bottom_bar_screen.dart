@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:scan_sa_user/app/app_routes/app_pages.dart';
 import 'package:scan_sa_user/app/presentation/bottom_bar_module/controller/bottom_bar_controller.dart';
 import 'package:scan_sa_user/app/presentation/bottom_bar_module/screens/cart_module/cart_screen.dart';
 import 'package:scan_sa_user/app/presentation/bottom_bar_module/screens/category_module/category_screen.dart';
@@ -9,7 +8,6 @@ import 'package:scan_sa_user/app/presentation/bottom_bar_module/screens/profile_
 import 'package:scan_sa_user/app/widgets/app_image_widget.dart';
 import 'package:scan_sa_user/utils/app_icons.dart';
 import 'package:scan_sa_user/utils/extension/context_ext.dart';
-import 'package:scan_sa_user/utils/extension/string_ext.dart';
 
 class BottomBarScreen extends StatefulWidget {
   const BottomBarScreen({super.key});
@@ -24,7 +22,7 @@ class _BottomBarScreenState extends State<BottomBarScreen> {
   void initState() {
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       if ((Get.arguments as bool?) ?? true) {
-        AppPages.categoryScreen.push();
+        // AppPages.categoryScreen.push();
       }
     });
     super.initState();

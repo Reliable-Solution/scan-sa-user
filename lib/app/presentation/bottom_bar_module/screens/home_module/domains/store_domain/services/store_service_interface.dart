@@ -12,11 +12,11 @@ abstract class StoreServiceInterface {
     required DataSourceEnum source,
   });
   Future<List<Store>?> getPopularStoreList(
-    String type, {
+    String storeType, {
     required DataSourceEnum source,
   });
   Future<List<Store>?> getLatestStoreList(
-    String type, {
+    String storeType, {
     required DataSourceEnum source,
   });
   Future<List<Store>?> getTopOfferStoreList({

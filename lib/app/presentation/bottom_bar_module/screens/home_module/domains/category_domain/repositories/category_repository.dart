@@ -23,7 +23,7 @@ class CategoryRepository implements CategoryRepositoryInterface {
     bool categoryStoreList = false,
     bool? allCategory,
     String? id,
-    String? type,
+    String? storeType,
     DataSourceEnum? source,
   }) async {
     if (categoryList) {
@@ -31,9 +31,9 @@ class CategoryRepository implements CategoryRepositoryInterface {
     } else if (subCategoryList) {
       return _getSubCategoryList(id);
     } else if (categoryItemList) {
-      return _getCategoryItemList(id, offset!, type!);
+      return _getCategoryItemList(id, offset!, storeType!);
     } else if (categoryStoreList) {
-      return _getCategoryStoreList(id, offset!, type!);
+      return _getCategoryStoreList(id, offset!, storeType!);
     }
     return null;
   }

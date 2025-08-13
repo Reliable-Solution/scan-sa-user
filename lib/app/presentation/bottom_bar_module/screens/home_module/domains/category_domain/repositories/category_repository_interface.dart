@@ -13,7 +13,7 @@ abstract class CategoryRepositoryInterface
     bool categoryStoreList = false,
     bool? allCategory,
     String? id,
-    String? type,
+    String? storeType,
     DataSourceEnum? source,
   });
   Future<Response<dynamic>> getSearchData(

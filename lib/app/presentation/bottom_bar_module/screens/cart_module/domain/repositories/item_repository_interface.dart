@@ -7,7 +7,7 @@ abstract class ItemRepositoryInterface implements RepositoryInterface<dynamic> {
   @override
   Future<dynamic> getList({
     int? offset,
-    String? type,
+    String? storeType,
     bool isPopularItem = false,
     bool isReviewedItem = false,
     bool isFeaturedCategoryItems = false,

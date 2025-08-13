@@ -51,7 +51,7 @@ class ApiClient extends GetxService {
   final int timeoutInSeconds = 40;
 
   String? token;
-  late Map<String, String> _mainHeaders;
+  Map<String, String> _mainHeaders = {};
 
   Map<String, String> updateHeader({
     String? token,
@@ -63,7 +63,8 @@ class ApiClient extends GetxService {
     String? longitude,
     bool setHeader = true,
   }) {
-    final header = <String, String>{};
+    final header = <String, String>{..._mainHeaders};
+    header.addAll(_mainHeaders);
 
     if (moduleID != null ||
         sharedPreferences.getString(AppConstants.cacheModuleId) != null) {
@@ -74,16 +75,17 @@ class ApiClient extends GetxService {
     }
     header.addAll({
       'Content-Type': 'application/json; charset=UTF-8',
-      AppConstants.zoneId: zoneIDs != null ? jsonEncode(zoneIDs) : '',
-      AppConstants.moduleId: '1',
+      if (zoneIDs != null) AppConstants.zoneId: jsonEncode(zoneIDs),
+      AppConstants.moduleId: moduleID?.toString() ?? '1',
 
       ///this will add in ride module
       // AppConstants.operationAreaId: operationIds != null ? jsonEncode(operationIds) : '',
+      // if (languageCode != null)
       AppConstants.localizationKey:
           languageCode ?? AppConstants.languages[0].languageCode!,
-      AppConstants.latitude: latitude != null ? jsonEncode(latitude) : '',
-      AppConstants.longitude: longitude != null ? jsonEncode(longitude) : '',
-      'Authorization': 'Bearer $token',
+      if (latitude != null) AppConstants.latitude: jsonEncode(latitude),
+      if (longitude != null) AppConstants.longitude: jsonEncode(longitude),
+      if (token != null) 'Authorization': 'Bearer $token',
     });
     if (setHeader) {
       _mainHeaders = header;

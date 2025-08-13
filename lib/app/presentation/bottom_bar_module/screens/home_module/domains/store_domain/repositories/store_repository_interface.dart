@@ -10,7 +10,7 @@ abstract class StoreRepositoryInterface extends RepositoryInterface<dynamic> {
     bool isStoreList = false,
     String? filterBy,
     bool isPopularStoreList = false,
-    String? type,
+    String? storeType,
     bool isLatestStoreList = false,
     bool isFeaturedStoreList = false,
     bool isVisitAgainStoreList = false,
