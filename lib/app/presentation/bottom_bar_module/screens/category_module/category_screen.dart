@@ -3,8 +3,8 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:scan_sa_user/api/api_client.dart';
 import 'package:scan_sa_user/app/app_routes/app_pages.dart';
-import 'package:scan_sa_user/app/presentation/bottom_bar_module/controller/bottom_bar_controller.dart';
 import 'package:scan_sa_user/app/presentation/main_screens/controller/global_controller.dart';
 import 'package:scan_sa_user/app/widgets/address_widget.dart';
 import 'package:scan_sa_user/app/widgets/app_image_widget.dart';
@@ -326,7 +326,6 @@ class _SpinnerPageState extends State<SpinnerPage>
 
   @override
   Widget build(BuildContext context) {
-    final bottomController = Get.find<BottomBarController>();
     final center = getCenter(context);
     return Scaffold(
       backgroundColor: context.color.secondary,
@@ -371,7 +370,11 @@ class _SpinnerPageState extends State<SpinnerPage>
                                     Get.find<GlobalController>()
                                       ..module = module
                                       ..update();
-                                    bottomController.changeCategory(index);
+                                    Get.find<ApiClient>().updateHeader(
+                                      moduleID: module?.id,
+                                    );
+                                    AppPages.bottomBarScreen.offAll();
+                                    // bottomController.changeCategory(index);
                                   },
                                   child: Stack(
                                     alignment: Alignment.center,

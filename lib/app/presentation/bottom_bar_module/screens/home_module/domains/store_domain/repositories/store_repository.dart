@@ -24,7 +24,7 @@ class StoreRepository implements StoreRepositoryInterface {
     bool isStoreList = false,
     String? filterBy,
     bool isPopularStoreList = false,
-    String? type,
+    String? storeType,
     bool isLatestStoreList = false,
     bool isFeaturedStoreList = false,
     bool isVisitAgainStoreList = false,
@@ -39,17 +39,17 @@ class StoreRepository implements StoreRepositoryInterface {
       return _getStoreList(
         offset!,
         filterBy!,
-        type!,
+        storeType!,
         source: source ?? DataSourceEnum.client,
       );
     } else if (isPopularStoreList) {
       return _getPopularStoreList(
-        type!,
+        storeType!,
         source: source ?? DataSourceEnum.client,
       );
     } else if (isLatestStoreList) {
       return _getLatestStoreList(
-        type!,
+        storeType!,
         source: source ?? DataSourceEnum.client,
       );
     } else if (isFeaturedStoreList) {
@@ -68,7 +68,7 @@ class StoreRepository implements StoreRepositoryInterface {
       return _getTopOfferStoreList(
         source: source ?? DataSourceEnum.client,
         filterBy: filterBy,
-        sortBy: type,
+        sortBy: storeType,
       );
     }
   }
@@ -81,7 +81,7 @@ class StoreRepository implements StoreRepositoryInterface {
   }) async {
     StoreModel? storeModel;
     final cacheId =
-        '${AppConstants.storeUri}/$filterBy?store_type=$storeType&offset=$offset&limit=12';
+        '${AppConstants.storeUri}/$filterBy/?store_type=$storeType&offset=$offset&limit=12';
 
     ///-${Get.find<GlobalController>().module!.id!}
 

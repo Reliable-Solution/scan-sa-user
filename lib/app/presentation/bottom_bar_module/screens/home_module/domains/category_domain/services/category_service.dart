@@ -40,7 +40,7 @@ class CategoryService implements CategoryServiceInterface {
     return (await categoryRepositoryInterface.getList(
           id: categoryID,
           offset: offset,
-          type: type,
+          storeType: type,
           categoryItemList: true,
         ))
         as ItemModel?;
@@ -55,7 +55,7 @@ class CategoryService implements CategoryServiceInterface {
     return (await categoryRepositoryInterface.getList(
           id: categoryID,
           offset: offset,
-          type: type,
+          storeType: type,
           categoryStoreList: true,
         ))
         as StoreModel?;

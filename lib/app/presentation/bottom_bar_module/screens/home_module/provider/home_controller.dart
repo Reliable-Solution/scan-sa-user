@@ -10,9 +10,7 @@ import 'package:scan_sa_user/app/presentation/bottom_bar_module/screens/home_mod
 import 'package:scan_sa_user/app/presentation/bottom_bar_module/screens/home_module/domains/store_domain/services/store_service_interface.dart';
 
 class HomeController extends GetxController {
-  HomeController({required this.storeServiceInterface}) {
-    getData(isLoad: true);
-  }
+  HomeController({required this.storeServiceInterface});
   final StoreServiceInterface storeServiceInterface;
   final bannerServiceInterface = Get.find<BannerServiceInterface>();
   final categoryServiceInterface = Get.find<CategoryServiceInterface>();
@@ -38,7 +36,17 @@ class HomeController extends GetxController {
   final Rx<List<bool>?> _interestSelectedList = Rx<List<bool>?>(null);
   Rx<List<bool>?> get interestSelectedList => _interestSelectedList;
 
-  Future<void> getData({bool isLoad = false, bool isHomeLoad = false}) async {
+  Future<void> getData({
+    bool isLoad = false,
+    bool isHomeLoad = false,
+    bool isPickupScreen = false,
+    bool isSlotScreen = false,
+  }) async {
+    // _filterType = isPickupScreen
+    //     ? 'Dine'
+    //     : isSlotScreen
+    //     ? ''
+    //     : '';
     if (isLoad || storeList.isEmpty) {
       isStoreLoad = true;
       storeList.clear();
@@ -243,10 +251,10 @@ class HomeController extends GetxController {
     update();
   }
 
-  Future<void> getPopularStoreList(String type) async {
+  Future<void> getPopularStoreList(String storeType) async {
     List<Store>? popularStoreList;
     popularStoreList = await storeServiceInterface.getPopularStoreList(
-      type,
+      storeType,
       source: DataSourceEnum.client,
     );
     if (popularStoreList != null) {
@@ -255,11 +263,11 @@ class HomeController extends GetxController {
     }
   }
 
-  Future<void> getLatestStoreList(String type) async {
+  Future<void> getLatestStoreList(String storeType) async {
     List<Store>? latestStoreList;
 
     latestStoreList = await storeServiceInterface.getLatestStoreList(
-      type,
+      storeType,
       source: DataSourceEnum.client,
     );
     if (latestStoreList != null) {
