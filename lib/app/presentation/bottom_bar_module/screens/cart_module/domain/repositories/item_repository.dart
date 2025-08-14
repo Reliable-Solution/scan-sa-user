@@ -100,7 +100,7 @@ class ItemRepository implements ItemRepositoryInterface {
   @override
   Future<dynamic> getList({
     int? offset,
-    String? type,
+    String? storeType,
     bool isPopularItem = false,
     bool isReviewedItem = false,
     bool isFeaturedCategoryItems = false,
@@ -111,12 +111,12 @@ class ItemRepository implements ItemRepositoryInterface {
   }) async {
     if (isPopularItem) {
       return _getPopularItemList(
-        type!,
+        storeType!,
         source: source ?? DataSourceEnum.client,
       );
     } else if (isReviewedItem) {
       return _getReviewedItemList(
-        type!,
+        storeType!,
         source: source ?? DataSourceEnum.client,
       );
     } else if (isFeaturedCategoryItems) {
@@ -125,14 +125,14 @@ class ItemRepository implements ItemRepositoryInterface {
       );
     } else if (isRecommendedItems) {
       return _getRecommendedItemList(
-        type!,
+        storeType!,
         source: source ?? DataSourceEnum.client,
       );
     } else if (isCommonConditions) {
       return _getCommonConditions();
     } else if (isDiscountedItems) {
       return _getDiscountedItemList(
-        type!,
+        storeType!,
         source: source ?? DataSourceEnum.client,
       );
     }

@@ -24,7 +24,7 @@ class StoreService implements StoreServiceInterface {
           offset: offset,
           isStoreList: true,
           filterBy: filterBy,
-          type: storeType,
+          storeType: storeType,
           source: source,
         ))
         as StoreModel?;
@@ -32,12 +32,12 @@ class StoreService implements StoreServiceInterface {
 
   @override
   Future<List<Store>?> getPopularStoreList(
-    String type, {
+    String storeType, {
     required DataSourceEnum source,
   }) async {
     return (await storeRepositoryInterface.getList(
           isPopularStoreList: true,
-          type: type,
+          storeType: storeType,
           source: source,
         ))
         as List<Store>?;
@@ -45,12 +45,12 @@ class StoreService implements StoreServiceInterface {
 
   @override
   Future<List<Store>?> getLatestStoreList(
-    String type, {
+    String storeType, {
     required DataSourceEnum source,
   }) async {
     return (await storeRepositoryInterface.getList(
           isLatestStoreList: true,
-          type: type,
+          storeType: storeType,
           source: source,
         ))
         as List<Store>?;
@@ -66,7 +66,7 @@ class StoreService implements StoreServiceInterface {
           isTopOfferStoreList: true,
           source: source,
           filterBy: filterBy,
-          type: sortBy,
+          storeType: sortBy,
         ))
         as List<Store>?;
   }

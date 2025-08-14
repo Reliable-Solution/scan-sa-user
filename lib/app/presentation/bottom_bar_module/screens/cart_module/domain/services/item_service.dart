@@ -20,7 +20,7 @@ class ItemService implements ItemServiceInterface {
     DataSourceEnum? source,
   ) async {
     return (await itemRepositoryInterface.getList(
-          type: type,
+          storeType: type,
           isPopularItem: true,
           source: source,
         ))
@@ -33,7 +33,7 @@ class ItemService implements ItemServiceInterface {
     DataSourceEnum? source,
   ) async {
     return (await itemRepositoryInterface.getList(
-          type: type,
+          storeType: type,
           isReviewedItem: true,
           source: source,
         ))
@@ -57,7 +57,7 @@ class ItemService implements ItemServiceInterface {
     DataSourceEnum? source,
   ) async {
     return (await itemRepositoryInterface.getList(
-          type: type,
+          storeType: type,
           isRecommendedItems: true,
           source: source,
         ))
@@ -71,7 +71,7 @@ class ItemService implements ItemServiceInterface {
   ) async {
     return (await itemRepositoryInterface.getList(
           isDiscountedItems: true,
-          type: type,
+          storeType: type,
           source: source,
         ))
         as List<Item>?;

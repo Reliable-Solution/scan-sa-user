@@ -390,6 +390,12 @@ class HomeScreen extends GetItHook<HomeController> {
 
   @override
   void onInit() {
+    controller.getData(
+      isLoad: true,
+      isPickupScreen: isPickupScreen,
+      isSlotScreen: isSlotScreen,
+    );
+
     pageController.addListener(
       () => bannerPageIndex.value = pageController.page?.toInt() ?? 0,
     );

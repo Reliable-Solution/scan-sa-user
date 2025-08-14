@@ -1,4 +1,5 @@
 import 'package:get/get.dart';
+import 'package:scan_sa_user/api/api_client.dart';
 import 'package:scan_sa_user/app/app_routes/app_pages.dart';
 import 'package:scan_sa_user/app/presentation/main_screens/controller/global_controller.dart';
 import 'package:scan_sa_user/common/models/notification_body_model.dart';
@@ -72,11 +73,20 @@ void _forNotificationRouteProcess(NotificationBodyModel? notificationBody) {
 }
 
 Future<void> _forLoggedInUserRouteProcess() async {
-  await Get.find<GlobalController>().updateToken();
+  final globalController = Get.find<GlobalController>();
+  await globalController.updateToken();
   if (AddressHelper.getUserAddressFromSharedPref() != null) {
-    AppPages.bottomBarScreen.push();
+    if (globalController.moduleList.length <= 1) {
+      Get.find<ApiClient>().updateHeader(
+        moduleID: globalController.moduleList.firstOrNull?.id,
+      );
+      globalController.module = globalController.moduleList.firstOrNull;
+      AppPages.bottomBarScreen.offAll();
+    } else {
+      AppPages.categoryScreen.offAll();
+    }
   } else {
-    AppPages.locationScreen.push(arguments: {AppStrings.fromSplash: true});
+    AppPages.locationScreen.offAll(arguments: {AppStrings.fromSplash: true});
   }
 }
 
