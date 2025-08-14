@@ -1,4 +1,5 @@
 import 'package:scan_sa_user/common/models/module_model.dart';
+import 'package:scan_sa_user/utils/extension/string_ext.dart';
 
 class ConfigModel {
   ConfigModel({
@@ -568,6 +569,7 @@ class ModuleConfig {
   ModuleConfig({this.moduleType, this.module});
 
   ModuleConfig.fromJson(Map<String, dynamic> json) {
+    '====>>> here module config data from api $json'.print;
     moduleType = (json['module_type'] as List)
         .map((e) => e.toString())
         .toList();

@@ -135,8 +135,10 @@ class OrderController extends GetxController implements GetxService {
         update();
       }
     }
-    final PaginatedOrderModel? orderModel = await orderServiceInterface
-        .getRunningOrderList(offset, fromDashboard);
+    final orderModel = await orderServiceInterface.getRunningOrderList(
+      offset,
+      fromDashboard,
+    );
     if (offset == 1) {
       _runningOrderModel = orderModel;
     } else {
@@ -154,8 +156,7 @@ class OrderController extends GetxController implements GetxService {
         update();
       }
     }
-    final PaginatedOrderModel? orderModel = await orderServiceInterface
-        .getHistoryOrderList(offset);
+    final orderModel = await orderServiceInterface.getHistoryOrderList(offset);
     if (offset == 1) {
       _historyOrderModel = orderModel;
     } else {
@@ -179,11 +180,10 @@ class OrderController extends GetxController implements GetxService {
     if (_trackModel == null ||
         (_trackModel!.orderType != 'parcel' &&
             !_trackModel!.prescriptionOrder!)) {
-      final List<OrderDetailsModel>? detailsList = await orderServiceInterface
-          .getOrderDetails(
-            orderID,
-            GlobalHelper.isLoggedIn() ? null : GlobalHelper.getGuestId(),
-          );
+      final detailsList = await orderServiceInterface.getOrderDetails(
+        orderID,
+        GlobalHelper.isLoggedIn() ? null : GlobalHelper.getGuestId(),
+      );
       _isLoading = false;
       if (detailsList != null) {
         _orderDetails = [];
@@ -271,7 +271,7 @@ class OrderController extends GetxController implements GetxService {
     _isLoading = false;
     Get.back();
     if (success) {
-      final OrderModel? orderModel = orderServiceInterface.prepareOrderModel(
+      final orderModel = orderServiceInterface.prepareOrderModel(
         _runningOrderModel,
         orderID,
       );
