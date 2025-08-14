@@ -504,7 +504,18 @@ class CartController extends GetxController implements GetxService {
         [],
         'Item',
       );
-      if (item.stock! <= 0) {
+      Get.find<GlobalController>()
+          .configModel!
+          .moduleConfig!
+          .module!
+          .stock!
+          .print;
+      if (Get.find<GlobalController>()
+              .configModel!
+              .moduleConfig!
+              .module!
+              .stock! &&
+          item.stock! <= 0) {
         EasyLoading.dismiss();
         showCustomSnackBar('out_of_stock'.tr);
       } else if (Get.find<CartController>().existAnotherStoreItem(
