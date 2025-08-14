@@ -26,7 +26,7 @@ class CartModel {
     _foodVariations = foodVariations;
     _discountAmount = discountAmount;
     _quantity = quantity;
-    this.addOnIds;
+    _addOnIds = addOnIds;
     _addOns = addOns;
     _isCampaign = isCampaign;
     _stock = stock;

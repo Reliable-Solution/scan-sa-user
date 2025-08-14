@@ -19,6 +19,7 @@ class CategoryScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final globalController = Get.find<GlobalController>();
     return Scaffold(
       // backgroundColor: context.color.secondary,
       body: Stack(
@@ -86,7 +87,7 @@ class CategoryScreen extends StatelessWidget {
                                   style: TextStyle(
                                     fontSize: 26.sp,
                                     fontWeight: FontWeight.w900,
-                                    color: Get.find<GlobalController>().isDark
+                                    color: globalController.isDark
                                         ? context.color.primary
                                         : context.color.ff6A2100,
                                   ),
@@ -97,7 +98,7 @@ class CategoryScreen extends StatelessWidget {
                                     fontSize: 42.sp,
                                     height: 1.1,
                                     fontWeight: FontWeight.w900,
-                                    color: Get.find<GlobalController>().isDark
+                                    color: globalController.isDark
                                         ? context.color.primary
                                         : context.color.ff6A2100,
                                   ),
@@ -107,7 +108,7 @@ class CategoryScreen extends StatelessWidget {
                                   style: TextStyle(
                                     fontSize: 26.sp,
                                     fontWeight: FontWeight.w900,
-                                    color: Get.find<GlobalController>().isDark
+                                    color: globalController.isDark
                                         ? context.color.primary
                                         : context.color.ff6A2100,
                                   ),
@@ -185,6 +186,7 @@ class CategoryScreen extends StatelessWidget {
     int? index,
     String? screen,
   }) {
+    final globalController = Get.find<GlobalController>();
     return Expanded(
       child: GestureDetector(
         onTap: () => index == null
@@ -196,7 +198,7 @@ class CategoryScreen extends StatelessWidget {
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(20),
             color: context.color.whiteLight,
-            border: Get.find<GlobalController>().isDark
+            border: globalController.isDark
                 ? Border.all(color: const Color(0xFf454545))
                 : null,
             boxShadow: [
@@ -327,6 +329,7 @@ class _SpinnerPageState extends State<SpinnerPage>
   @override
   Widget build(BuildContext context) {
     final center = getCenter(context);
+    final globalController = Get.find<GlobalController>();
     return Scaffold(
       backgroundColor: context.color.secondary,
       body: Center(
@@ -347,16 +350,11 @@ class _SpinnerPageState extends State<SpinnerPage>
                       angle: _rotation.value,
                       child: Stack(
                         children: List.generate(
-                          Get.find<GlobalController>().moduleList.length,
+                          globalController.moduleList.length,
                           (index) {
-                            final module =
-                                Get.find<GlobalController>().moduleList[index];
+                            final module = globalController.moduleList[index];
                             final angle =
-                                (2 *
-                                    pi /
-                                    Get.find<GlobalController>()
-                                        .moduleList
-                                        .length) *
+                                (2 * pi / globalController.moduleList.length) *
                                 index;
                             final x = radius * cos(angle);
                             final y = radius * sin(angle);
@@ -367,7 +365,14 @@ class _SpinnerPageState extends State<SpinnerPage>
                                 angle: -_rotation.value,
                                 child: GestureDetector(
                                   onTap: () {
-                                    Get.find<GlobalController>()
+                                    // '==>> ${globalController.configModel?.moduleConfig?.toJson()}'
+                                    //     .print;
+                                    globalController
+                                        .configModel
+                                        ?.moduleConfig
+                                        ?.module = globalController
+                                        .getModuleConfig(module?.moduleType);
+                                    globalController
                                       ..module = module
                                       ..update();
                                     Get.find<ApiClient>().updateHeader(
