@@ -1629,5 +1629,9 @@
   "only_veg": "نباتي فقط",
   "loginSuccessfully": "تم تسجيل الدخول بنجاح",
   "registerSuccessfully": "تم التسجيل بنجاح",
-  "only_non_veg": "غير نباتي فقط"
+  "only_non_veg": "غير نباتي فقط",
+  "pleaseProviderValidIban": "يرجى إدخال رقم IBAN صالح",
+  "pleaseEnterIban": "يرجى إدخال رقم IBAN (رقم الحساب المصرفي الدولي)",
+  "iban": "رقم IBAN",
+  "writeIban": "اكتب رقم IBAN الخاص بك"
 }

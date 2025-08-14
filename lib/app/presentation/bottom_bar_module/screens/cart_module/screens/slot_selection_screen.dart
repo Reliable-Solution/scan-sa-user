@@ -28,6 +28,7 @@ class _SlotSelectionScreenState extends State<SlotSelectionScreen>
   @override
   void initState() {
     tabController = TabController(length: 2, vsync: this);
+    Get.find<CheckoutController>().isToday.value = true;
     super.initState();
   }
 
@@ -99,56 +100,59 @@ class _SlotSelectionScreenState extends State<SlotSelectionScreen>
                   ),
                 ),
                 Expanded(
-                  child: GridView.builder(
-                    itemCount: checkoutController.timeSlots.length,
-                    padding: EdgeInsets.symmetric(
-                      horizontal: AppSizes.appPadding,
-                      vertical: 10,
-                    ),
-                    gridDelegate:
-                        const SliverGridDelegateWithFixedCrossAxisCount(
-                          crossAxisCount: 2,
-                          crossAxisSpacing: 12,
-                          mainAxisSpacing: 12,
-                          childAspectRatio: 4,
-                        ),
-                    itemBuilder: (context, index) {
-                      final slot = checkoutController.timeSlots[index];
-                      final slotTime =
-                          '${DateFormat('hh:mm a').format(slot.startTime!)}'
-                          ' - ${DateFormat('hh:mm a').format(slot.endTime!)}';
-                      final isSelected =
-                          checkoutController.selectedTime.value == slotTime &&
-                          checkoutController.isSecToday.value ==
-                              checkoutController.isToday.value;
-                      return GestureDetector(
-                        onTap: () =>
-                            checkoutController.changeSelectedTime(slotTime),
-                        child: Container(
-                          alignment: Alignment.center,
-                          decoration: BoxDecoration(
-                            border: Border.all(
-                              color: isSelected
-                                  ? context.color.primary
-                                  : context.color.lightText,
-                            ),
-                            borderRadius: BorderRadius.circular(8),
+                  child: checkoutController.timeSlots.isEmpty
+                      ? const Center(child: Text('Restaurant is closed'))
+                      : GridView.builder(
+                          itemCount: checkoutController.timeSlots.length,
+                          padding: EdgeInsets.symmetric(
+                            horizontal: AppSizes.appPadding,
+                            vertical: 10,
                           ),
-                          child: Text(
-                            isToday && index == 0
-                                ? context.l10n.instant
-                                : '${DateFormat('hh:mm a').format(slot.startTime!)}'
-                                      ' - ${DateFormat('hh:mm a').format(slot.endTime!)}',
-                            style: context.style.s14w700.copyWith(
-                              color: isSelected
-                                  ? context.color.primary
-                                  : context.color.ff6c6c6c,
-                            ),
-                          ),
+                          gridDelegate:
+                              const SliverGridDelegateWithFixedCrossAxisCount(
+                                crossAxisCount: 2,
+                                crossAxisSpacing: 12,
+                                mainAxisSpacing: 12,
+                                childAspectRatio: 4,
+                              ),
+                          itemBuilder: (context, index) {
+                            final slot = checkoutController.timeSlots[index];
+                            final slotTime =
+                                '${DateFormat('hh:mm a').format(slot.startTime!)}'
+                                ' - ${DateFormat('hh:mm a').format(slot.endTime!)}';
+                            final isSelected =
+                                checkoutController.selectedTime.value ==
+                                    slotTime &&
+                                checkoutController.isSecToday.value ==
+                                    checkoutController.isToday.value;
+                            return GestureDetector(
+                              onTap: () => checkoutController
+                                  .changeSelectedTime(slotTime),
+                              child: Container(
+                                alignment: Alignment.center,
+                                decoration: BoxDecoration(
+                                  border: Border.all(
+                                    color: isSelected
+                                        ? context.color.primary
+                                        : context.color.lightText,
+                                  ),
+                                  borderRadius: BorderRadius.circular(8),
+                                ),
+                                child: Text(
+                                  isToday && index == 0
+                                      ? context.l10n.instant
+                                      : '${DateFormat('hh:mm a').format(slot.startTime!)}'
+                                            ' - ${DateFormat('hh:mm a').format(slot.endTime!)}',
+                                  style: context.style.s14w700.copyWith(
+                                    color: isSelected
+                                        ? context.color.primary
+                                        : context.color.ff6c6c6c,
+                                  ),
+                                ),
+                              ),
+                            );
+                          },
                         ),
-                      );
-                    },
-                  ),
                 ),
               ],
             );
