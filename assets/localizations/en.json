@@ -1639,5 +1639,9 @@
   "only_veg": "Only Veg",
   "only_non_veg": "Only Non-veg",
   "loginSuccessfully": "Login successfully",
-  "registerSuccessfully": "Register successfully"
+  "registerSuccessfully": "Register successfully",
+  "pleaseProviderValidIban": "Please enter valid IBAN number",
+  "pleaseEnterIban": "Please enter your IBAN (International Bank Account Number)",
+  "iban": "IBAN Number",
+  "writeIban": "Write your IBAN Number"
 }
