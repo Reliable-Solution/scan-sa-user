@@ -328,7 +328,6 @@ class GlobalController extends GetxController {
         ? module?.newVariation = true
         : module?.newVariation = false;
 
-    '==>>> module ==>> $module'.print;
     return module;
   }
 
