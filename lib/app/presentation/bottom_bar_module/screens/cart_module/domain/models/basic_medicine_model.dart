@@ -92,8 +92,8 @@ class Unit {
   }
 }
 
-class Module {
-  Module({
+class BasicModule {
+  BasicModule({
     this.id,
     this.moduleName,
     this.moduleType,
@@ -108,19 +108,21 @@ class Module {
     this.allZoneService,
   });
 
-  Module.fromJson(Map<String, dynamic> json) {
-    id = json['id'] as int?;
-    moduleName = json['module_name'] as String?;
-    moduleType = json['module_type'] as String?;
-    thumbnail = json['thumbnail'] as String?;
-    status = json['status'] as String?;
-    storesCount = json['stores_count'] as int?;
-    createdAt = json['created_at'] as String?;
-    updatedAt = json['updated_at'] as String?;
-    icon = json['icon'] as String?;
-    themeId = json['theme_id'] as int?;
-    description = json['description'] as String?;
-    allZoneService = json['all_zone_service'] as int?;
+  factory BasicModule.fromJson(Map<String, dynamic> json) {
+    return BasicModule(
+      id: json['id'] as int?,
+      moduleName: json['module_name'] as String?,
+      moduleType: json['module_type'] as String?,
+      thumbnail: json['thumbnail'] as String?,
+      status: json['status'] as String?,
+      storesCount: json['stores_count'] as int?,
+      createdAt: json['created_at'] as String?,
+      updatedAt: json['updated_at'] as String?,
+      icon: json['icon'] as String?,
+      themeId: json['theme_id'] as int?,
+      description: json['description'] as String?,
+      allZoneService: json['all_zone_service'] as int?,
+    );
   }
   int? id;
   String? moduleName;
