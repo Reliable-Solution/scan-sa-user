@@ -1,0 +1,2 @@
+/Users/reliablesolution/Desktop/Vikalp/codecanyon-Qltpny9H-6ammart-multivendor-food-grocery-ecommerce-parcel-pharmacy-delivery-app-with-admin-website/FridaySA User/android/app/.cxx/Debug/m5a3w205/armeabi-v7a/CMakeFiles/edit_cache.dir
+/Users/reliablesolution/Desktop/Vikalp/codecanyon-Qltpny9H-6ammart-multivendor-food-grocery-ecommerce-parcel-pharmacy-delivery-app-with-admin-website/FridaySA User/android/app/.cxx/Debug/m5a3w205/armeabi-v7a/CMakeFiles/rebuild_cache.dir

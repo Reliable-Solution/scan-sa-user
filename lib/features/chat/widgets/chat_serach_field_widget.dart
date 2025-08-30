@@ -1,0 +1,83 @@
+import 'package:scan_sa_user/util/extension/context_ext.dart';
+import 'package:flutter/material.dart';
+import 'package:scan_sa_user/helper/responsive_helper.dart';
+import 'package:scan_sa_user/util/dimensions.dart';
+import 'package:scan_sa_user/util/styles.dart';
+
+class ChatSearchFieldWidget extends StatefulWidget {
+  const ChatSearchFieldWidget({
+    super.key,
+    required this.controller,
+    required this.hint,
+    required this.suffixIcon,
+    required this.iconPressed,
+    this.onSubmit,
+    this.onChanged,
+    this.onTap,
+  });
+  final TextEditingController controller;
+  final String hint;
+  final IconData suffixIcon;
+  final Function iconPressed;
+  final Function? onSubmit;
+  final Function? onChanged;
+  final Function()? onTap;
+
+  @override
+  State<ChatSearchFieldWidget> createState() => _ChatSearchFieldWidgetState();
+}
+
+class _ChatSearchFieldWidgetState extends State<ChatSearchFieldWidget> {
+  @override
+  Widget build(BuildContext context) {
+    return TextField(
+      controller: widget.controller,
+      textInputAction: TextInputAction.search,
+      onTap: widget.onTap,
+      decoration: InputDecoration(
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(
+            ResponsiveHelper.isDesktop(context) ? Dimensions.radiusSmall : 60,
+          ),
+          borderSide: BorderSide(
+            width: 1,
+            color: Theme.of(context).disabledColor.withValues(alpha: 0.3),
+          ),
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(
+            ResponsiveHelper.isDesktop(context) ? Dimensions.radiusSmall : 60,
+          ),
+          borderSide: BorderSide(
+            width: 1,
+            color: context.color.secondary.withValues(alpha: 0.3),
+          ),
+        ),
+        hintText: widget.hint,
+        hintStyle: robotoRegular.copyWith(
+          fontSize: Dimensions.fontSizeSmall,
+          color: Theme.of(context).disabledColor,
+        ),
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(
+            ResponsiveHelper.isDesktop(context) ? Dimensions.radiusSmall : 60,
+          ),
+          borderSide: BorderSide.none,
+        ),
+        filled: true,
+        fillColor: Theme.of(context).cardColor,
+        contentPadding: const EdgeInsets.all(Dimensions.paddingSizeDefault),
+        suffixIcon: IconButton(
+          onPressed: widget.iconPressed as void Function()?,
+          icon: Icon(
+            widget.suffixIcon,
+            color: Theme.of(context).hintColor,
+            size: 25,
+          ),
+        ),
+      ),
+      onSubmitted: widget.onSubmit as void Function(String)?,
+      onChanged: widget.onChanged as void Function(String)?,
+    );
+  }
+}

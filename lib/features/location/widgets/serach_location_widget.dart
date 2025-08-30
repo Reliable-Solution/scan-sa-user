@@ -1,0 +1,106 @@
+import 'package:scan_sa_user/util/extension/context_ext.dart';
+import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:scan_sa_user/features/location/widgets/location_search_dialog_widget.dart';
+import 'package:scan_sa_user/util/dimensions.dart';
+import 'package:scan_sa_user/util/styles.dart';
+
+class SearchLocationWidget extends StatelessWidget {
+  const SearchLocationWidget({
+    super.key,
+    required this.mapController,
+    required this.pickedAddress,
+    required this.isEnabled,
+    this.isPickedUp,
+    this.hint,
+    this.fromDialog = false,
+  });
+  final GoogleMapController? mapController;
+  final String? pickedAddress;
+  final bool? isEnabled;
+  final bool? isPickedUp;
+  final bool? fromDialog;
+  final String? hint;
+
+  @override
+  Widget build(BuildContext context) {
+    return InkWell(
+      onTap: () {
+        Get.dialog(
+          LocationSearchDialogWidget(
+            mapController: mapController,
+            isPickedUp: isPickedUp,
+          ),
+        );
+      },
+      child: Container(
+        height: 50,
+        padding:
+            const EdgeInsets.symmetric(horizontal: Dimensions.paddingSizeSmall),
+        decoration: BoxDecoration(
+          color: Theme.of(context).cardColor,
+          borderRadius: BorderRadius.circular(Dimensions.radiusSmall),
+          border: isEnabled != null
+              ? Border.all(
+                  color: fromDialog!
+                      ? Theme.of(context).disabledColor
+                      : isEnabled!
+                          ? context.color.secondary
+                          : Theme.of(context).disabledColor,
+                  width: isEnabled! ? 2 : 1,
+                )
+              : null,
+        ),
+        child: Row(
+          children: [
+            (/*!fromDialog! &&*/ pickedAddress != null &&
+                    pickedAddress!.isNotEmpty)
+                ? Icon(
+                    Icons.location_on,
+                    size: 25,
+                    color: (isEnabled == null || isEnabled!)
+                        ? context.color.secondary
+                        : Theme.of(context).disabledColor,
+                  )
+                : Text(
+                    'search_location'.tr,
+                    style: robotoRegular.copyWith(
+                      color: Theme.of(context).disabledColor,
+                    ),
+                  ),
+            const SizedBox(width: Dimensions.paddingSizeExtraSmall),
+            Expanded(
+              child: (pickedAddress != null && pickedAddress!.isNotEmpty)
+                  ? Text(
+                      pickedAddress!,
+                      style: robotoRegular.copyWith(
+                        fontSize: Dimensions.fontSizeLarge,
+                      ),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    )
+                  : Text(
+                      hint ?? '',
+                      style: robotoRegular.copyWith(
+                        fontSize: Dimensions.fontSizeLarge,
+                        color: Theme.of(context).hintColor,
+                      ),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+            ),
+            const SizedBox(width: Dimensions.paddingSizeSmall),
+            Icon(
+              Icons.search,
+              size: 25,
+              color: fromDialog!
+                  ? Theme.of(context).disabledColor
+                  : Theme.of(context).textTheme.bodyLarge!.color,
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}

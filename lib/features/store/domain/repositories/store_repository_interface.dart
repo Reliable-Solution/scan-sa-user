@@ -1,0 +1,57 @@
+import 'package:scan_sa_user/common/enums/data_source_enum.dart';
+import 'package:scan_sa_user/common/models/module_model.dart';
+import 'package:scan_sa_user/features/store/domain/models/store_menu_model.dart';
+import 'package:scan_sa_user/interfaces/repository_interface.dart';
+
+abstract class StoreRepositoryInterface extends RepositoryInterface {
+  @override
+  Future getList({
+    int? offset,
+    bool isStoreList = false,
+    String? filterBy,
+    bool isPopularStoreList = false,
+    String? type,
+    bool isLatestStoreList = false,
+    bool isFeaturedStoreList = false,
+    bool isVisitAgainStoreList = false,
+    bool isStoreRecommendedItemList = false,
+    int? storeId,
+    bool isStoreBannerList = false,
+    bool isRecommendedStoreList = false,
+    bool isTopOfferStoreList = false,
+    DataSourceEnum? source,
+  });
+  Future<dynamic> getStoreDetails(
+    String storeID,
+    bool fromCart,
+    String slug,
+    String languageCode,
+    ModuleModel? module,
+    int? cacheModuleId,
+    int? moduleId,
+  );
+  Future<dynamic> getStoreItemList(
+    int? storeID,
+    int offset,
+    int? categoryID,
+    String type,
+  );
+  Future<dynamic> getStoreSearchItemList(
+    String searchText,
+    String? storeID,
+    int offset,
+    String type,
+    int? categoryID,
+  );
+  Future<dynamic> getCartStoreSuggestedItemList(
+    int? storeId,
+    String languageCode,
+    ModuleModel? module,
+    int? cacheModuleId,
+    int? moduleId,
+  );
+  Future<List<MenuModelData>?> getStoreMenuList({
+    required int storeId,
+    required DataSourceEnum source,
+  });
+}
